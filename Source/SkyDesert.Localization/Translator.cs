@@ -10,7 +10,7 @@ namespace SkyDesert.Localization
             Locale = locale;
         }
 
-        private Locale Locale;
+        protected readonly Locale Locale;
 
         public bool TryTranslate(string key, bool formatArguments, bool recursive, out string translation)
         {

@@ -1,6 +1,6 @@
 namespace SkyDesert.Localization
 {
-    public class LocaleParser
+    public sealed class LocaleParser
     {
         public Locale Parse(string source)
         {
@@ -18,7 +18,7 @@ namespace SkyDesert.Localization
             return locale;
         }
 
-        protected bool TryParseLine(string line, out string key, out string translation)
+        private bool TryParseLine(string line, out string key, out string translation)
         {
             if (string.IsNullOrWhiteSpace(line) || line[0] == '#')
             {

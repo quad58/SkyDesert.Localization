@@ -22,7 +22,7 @@ namespace SkyDesert.Localization
             _Translations = new Dictionary<string, string>(translations);
         }
 
-        public string Code { get; private set; } // Should be an IETF BCP 47 language tag 
+        public string Code { get; protected set; } // Should be an IETF BCP 47 language tag 
 
         protected Dictionary<string, string> _Translations;
         public IReadOnlyDictionary<string, string> Translations => _Translations;
