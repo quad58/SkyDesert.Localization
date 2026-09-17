@@ -37,6 +37,14 @@ namespace SkyDesert.Localization
             return _Translations.AddOrUpdate(key, translation);
         }
 
+        public void AddOrUpdateTranslations(IEnumerable<KeyValuePair<string, string>> translations)
+        {
+            foreach (KeyValuePair<string, string> translation in translations)
+            {
+                _Translations.AddOrUpdate(translation.Key, translation.Value);
+            }
+        }
+
         public bool RemoveTranslation(string key)
         {
             return _Translations.Remove(key);
