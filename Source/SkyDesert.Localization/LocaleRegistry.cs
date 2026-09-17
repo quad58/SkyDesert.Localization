@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace SkyDesert.Localization
 {
-    public class LocaleRegistry
+    [CreateAssetMenu(menuName = "Localization/Locale Registry", fileName = "LocaleRegistry")]
+    public class LocaleRegistry : ScriptableObject
     {
         public LocaleRegistry(IEnumerable<Locale> locales)
         {
