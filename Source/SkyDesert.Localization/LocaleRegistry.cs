@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SkyDesert.Localization
 {
     [CreateAssetMenu(menuName = "Localization/Locale Registry", fileName = "LocaleRegistry")]
-    public sealed class LocaleRegistry : ScriptableObject, ILocaleProvider
+    public sealed class LocaleRegistry : ScriptableObject, ILocaleProvider, ILocaleChangeNotifier
     {
         public Locale CurrentLocale { get; private set; }
 
