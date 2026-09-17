@@ -21,9 +21,9 @@ namespace SkyDesert.Localization
             set
             {
                 Locale newLocale = Locales[value];
-                if (CurrentLocale.Code != value)
+                if (CurrentLocale == null || CurrentLocale.Code != value)
                 {
-                    OnLocaleChange.Invoke(newLocale);
+                    OnLocaleChange?.Invoke(newLocale);
                 }
                 CurrentLocale = newLocale;
             }
