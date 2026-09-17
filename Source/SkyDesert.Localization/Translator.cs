@@ -28,6 +28,12 @@ namespace SkyDesert.Localization
         public virtual string Translate(string key, string fallback, bool formatArguments, bool recursive)
         {
             string translation;
+
+            if (Locale == null || Locale.Translations != null)
+            {
+                return fallback;
+            }
+
             if (formatArguments)
             {
                 string[] keyArgumentPair = key.Split("(");
