@@ -1,25 +1,34 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 
 namespace SkyDesert.Localization
 {
-    [CreateAssetMenu(menuName = "Localization/Locale Registry", fileName = "LocaleRegistry")]
-    public sealed class LocaleRegistry : ScriptableObject, ILocaleProvider, ILocaleChangeNotifier
+    public sealed class LocaleRegistry : ILocaleProvider, ILocaleChangeNotifier
     {
-        public Locale CurrentLocale { get; private set; }
+        public LocaleRegistry()
+        {
+            _Locales = new Dictionary<string, Locale>();
+        }
+
+        public LocaleRegistry(IEnumerable<Locale> locales)
+        {
+            _Locales = locales.ToDictionary((locale) => locale.Code);
+        }
+
+        public Locale Current { get; private set; }
 
         public string CurrentLanguage
         {
-            get => CurrentLocale.Code;
+            get => Current.Code;
             set
             {
                 Locale newLocale = Locales[value];
-                if (CurrentLocale == null || CurrentLocale.Code != value)
+                if (Current == null || Current.Code != value)
                 {
                     OnLocaleChange?.Invoke(newLocale);
                 }
-                CurrentLocale = newLocale;
+                Current = newLocale;
             }
         }
 

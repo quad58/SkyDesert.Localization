@@ -1,7 +1,7 @@
 ﻿namespace SkyDesert.Localization
 {
-    public interface ILocaleProvider
+    public interface ILocaleProvider : IProvider<Locale>
     {
-        public Locale CurrentLocale { get; }
+
     }
 }

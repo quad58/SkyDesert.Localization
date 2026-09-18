@@ -29,7 +29,7 @@ namespace SkyDesert.Localization
         {
             string translation;
 
-            if (Locale == null || Locale.Translations != null)
+            if (Locale == null || Locale.Translations == null)
             {
                 return fallback;
             }
