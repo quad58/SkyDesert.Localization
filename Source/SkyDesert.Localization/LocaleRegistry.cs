@@ -23,11 +23,9 @@ namespace SkyDesert.Localization
             get => Current.Code;
             set
             {
+                if (Current != null && Current.Code == value) return;
                 Current = Locales[value];
-                if (Current == null || Current.Code != value)
-                {
-                    OnLocaleChange?.Invoke(Current);
-                }
+                OnLocaleChange?.Invoke(Current);
             }
         }
 
