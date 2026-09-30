@@ -1,5 +1,6 @@
+using SkyDesert.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SkyDesert.Localization
 {
@@ -7,131 +8,149 @@ namespace SkyDesert.Localization
     {
         public Translator(Locale locale)
         {
-            Locale = locale;
+            Locale = locale ?? throw new ArgumentNullException(nameof(locale));
         }
 
         protected readonly Locale Locale;
 
-        public bool TryTranslate(string key, bool formatArguments, bool recursive, out string translation)
+        public string Translate(string key, string fallback, bool formatArguments = true, int maxRecursionDepth = 32)
         {
-            translation = Translate(key, null, formatArguments, recursive);
-            return translation != null;
+            if (fallback == null) throw new ArgumentNullException(nameof(fallback));
+
+            if (TryTranslate(key, out string translation, formatArguments, maxRecursionDepth))
+            {
+                return translation;
+            }
+
+            return fallback;
         }
 
-        public bool TryTranslate(string key, out string translation)
+        public bool TryTranslate(string key, out string translation, bool formatArguments = true, int maxRecursionDepth = 32)
         {
-            return TryTranslate(key, true, true, out translation);
+            try
+            {
+                translation = Translate(key, formatArguments, maxRecursionDepth);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch
+            {
+                translation = null;
+                return false;
+            }
         }
 
-        // Below is an old realisation from Sky Desert and it is probably not safe and performative at all
-
-        public virtual string Translate(string key, string fallback, bool formatArguments, bool recursive)
+        public string Translate(string key, bool formatArguments = true, int maxRecursionDepth = 32)
         {
-            string translation;
-
-            if (Locale == null || Locale.Translations == null)
-            {
-                return fallback;
-            }
-
-            if (formatArguments)
-            {
-                string[] keyArgumentPair = key.Split("(");
-                keyArgumentPair[keyArgumentPair.Length - 1] = keyArgumentPair[keyArgumentPair.Length - 1].Replace(")", "");
-                if (keyArgumentPair.Length > 1)
-                {
-                    string[] arguments = keyArgumentPair[1].Split(",");
-                    key = keyArgumentPair[0];
-                    if (!Locale.Translations.TryGetValue(key, out translation))
-                    {
-                        translation = fallback;
-                    }
-                    if (keyArgumentPair[1] != "")
-                    {
-                        foreach (string argument in arguments)
-                        {
-                            string[] nameValuePair = argument.Split("=");
-                            string argumentName = nameValuePair[0];
-                            string argumentValue = nameValuePair[1];
-                            translation = translation.Replace("{" + argumentName + "}", argumentValue);
-                        }
-                    }
-                }
-                else
-                {
-                    if (!Locale.Translations.TryGetValue(key, out translation))
-                    {
-                        translation = fallback;
-                    }
-                }
-            }
-            else
-            {
-                if (!Locale.Translations.TryGetValue(key, out translation))
-                {
-                    translation = fallback;
-                }
-            }
-
-            if (recursive)
-            {
-                if (GetKeys(translation).Count != 0)
-                {
-                    translation = TranslateString(translation, formatArguments, true);
-                }
-            }
+            string translation = TranslateCore(key, formatArguments, maxRecursionDepth);
+            translation = translation.Replace(@"\(", "(");
+            translation = translation.Replace(@"\)", ")");
+            translation = translation.Replace(@"\=", "=");
+            translation = translation.Replace(@"\,", ",");
+            translation = translation.Replace(@"\{", "{");
+            translation = translation.Replace(@"\}", "}");
+            translation = translation.Replace(@"\\", "\\");
             return translation;
         }
 
-        public string Translate(string key, string fallback)
+        // TODO: Exceptions
+        protected virtual string TranslateCore(string key, bool formatArguments, int maxRecursionDepth)
         {
-            return Translate(key, fallback, true, true);
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Value cannot be empty or white space.", nameof(key));
+
+            string translation;
+
+            if (!formatArguments)
+            {
+                if (!Locale.Translations.TryGetValue(key, out translation))
+                {
+                    throw new TranslationException();
+                }
+                return TranslateRecursive(translation, formatArguments, maxRecursionDepth);
+            }
+
+            int openBracketIndex = key.IndexOf('(', true);
+
+            if (openBracketIndex == -1)
+            {
+                if (!Locale.Translations.TryGetValue(key, out translation))
+                {
+                    throw new TranslationException();
+                }
+                return TranslateRecursive(translation, formatArguments, maxRecursionDepth);
+            }
+
+            if (key.IndexOf(')', true) != key.Length - 1)
+            {
+                throw new TranslationException();
+            }
+
+            string keyName = key.Substring(0, openBracketIndex).Trim();
+
+            if (string.IsNullOrEmpty(keyName))
+            {
+                throw new TranslationException();
+            }
+
+            if (!Locale.Translations.TryGetValue(keyName, out translation))
+            {
+                throw new TranslationException();
+            }
+
+            string[] rawArguments = key.Substring(openBracketIndex + 1, key.Length - openBracketIndex - 2).Split(',', true);
+            Dictionary<string, string> arguments = new Dictionary<string, string>();
+
+            foreach (string argument in rawArguments)
+            {
+                int equalsIndex = argument.IndexOf('=', true);
+                if (equalsIndex == -1)
+                {
+                    throw new TranslationException();
+                }
+
+                string argumentName = argument.Substring(0, equalsIndex).Trim();
+                string argumentValue = argument.Substring(equalsIndex + 1, argument.Length - equalsIndex - 1).Trim();
+
+                if (!arguments.TryAdd(argumentName, argumentValue))
+                {
+                    throw new TranslationException();
+                }
+            }
+
+            translation = translation.ReplacePlaceholders(placeholderName =>
+            {
+                if (arguments.TryGetValue(placeholderName, out string argumentValue))
+                {
+                    return argumentValue;
+                }
+                return '{' + placeholderName + '}';
+            }, true);
+
+            return TranslateRecursive(translation, formatArguments, maxRecursionDepth);
         }
 
-        private List<string> GetKeys(string source)
+        public string TranslateString(string input, bool formatArguments = true, int maxRecursionDepth = 32)
         {
-            List<string> keys = new List<string>();
-
-            StringBuilder stringBuilder = new StringBuilder();
-            bool keyStarted = false;
-            foreach (char c in source)
+            if (input.IndexOf('{', true) == -1)
             {
-                if (c == '{')
-                {
-                    stringBuilder.Clear();
-                    keyStarted = true;
-                }
-                else if (c == '}' && keyStarted)
-                {
-                    keys.Add(stringBuilder.ToString());
-                    stringBuilder.Clear();
-                    keyStarted = false;
-                }
-                else
-                {
-                    stringBuilder.Append(c);
-                }
+                return input;
             }
-            return keys;
+            return input.ReplacePlaceholders(placeholderName =>
+            {
+                return TranslateCore(placeholderName, formatArguments, maxRecursionDepth);
+            }, true);
         }
 
-        private string TranslateString(string source, bool formatArguments, bool recursive)
+        protected string TranslateRecursive(string input, bool formatArguments, int currentDepth)
         {
-            List<string> keys = GetKeys(source);
-            foreach (string key in keys)
-            {
-                source = source.Replace("{" + key + "}", Translate(key, "Error: Key \"" + key.Split("(")[0] + "\" not found", formatArguments, recursive));
-            }
+            if (currentDepth <= 0)
+                return input;
 
-            if (recursive)
-            {
-                if (GetKeys(source).Count != 0)
-                {
-                    source = TranslateString(source, formatArguments, true);
-                }
-            }
-
-            return source;
+            return TranslateString(input, formatArguments, currentDepth - 1);
         }
     }
 }

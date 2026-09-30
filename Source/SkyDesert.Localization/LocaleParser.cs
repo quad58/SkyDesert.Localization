@@ -1,3 +1,7 @@
+// TODO: Exceptions
+
+using System;
+
 namespace SkyDesert.Localization
 {
     public sealed class LocaleParser
@@ -6,7 +10,7 @@ namespace SkyDesert.Localization
         {
             Locale locale = new Locale();
 
-            string[] lines = source.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = source.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string line in lines)
             {
                 if (TryParseLine(line, out string key, out string translation))

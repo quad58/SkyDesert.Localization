@@ -2,7 +2,7 @@
 
 namespace SkyDesert.Extensions
 {
-    public static class DictionaryExtension
+    public static class DictionaryExtensions
     {
         public static bool AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {

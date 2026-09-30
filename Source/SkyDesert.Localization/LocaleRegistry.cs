@@ -24,7 +24,11 @@ namespace SkyDesert.Localization
             set
             {
                 if (Current != null && Current.Code == value) return;
-                Current = Locales[value];
+                if (!_Locales.TryGetValue(value, out Locale locale))
+                {
+                    throw new KeyNotFoundException($"Locale with code {value} not found.");
+                }
+                Current = locale;
                 OnLocaleChange?.Invoke(Current);
             }
         }
