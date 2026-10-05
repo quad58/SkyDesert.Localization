@@ -61,22 +61,14 @@ namespace SkyDesert.Localization
 
             if (!parseArguments)
             {
-                if (!Locale.Translations.TryGetValue(key, out translation))
-                {
-                    throw new TranslationException(TranslationErrorCode.KeyNotFound);
-                }
-                return TranslateRecursive(translation, parseArguments, maxRecursionDepth);
+                return TranslateRecursive(GetTranslation(key), parseArguments, maxRecursionDepth);
             }
 
             int openBracketIndex = key.IndexOf('(', true);
 
             if (openBracketIndex == -1)
             {
-                if (!Locale.Translations.TryGetValue(key, out translation))
-                {
-                    throw new TranslationException(TranslationErrorCode.KeyNotFound);
-                }
-                return TranslateRecursive(translation, parseArguments, maxRecursionDepth);
+                return TranslateRecursive(GetTranslation(key), parseArguments, maxRecursionDepth);
             }
 
             if (key.IndexOf(')', true) != key.Length - 1)
@@ -91,30 +83,9 @@ namespace SkyDesert.Localization
                 throw new TranslationException(TranslationErrorCode.EmptyKey);
             }
 
-            if (!Locale.Translations.TryGetValue(keyName, out translation))
-            {
-                throw new TranslationException(TranslationErrorCode.KeyNotFound);
-            }
+            translation = GetTranslation(keyName);
 
-            string[] rawArguments = key.Substring(openBracketIndex + 1, key.Length - openBracketIndex - 2).Split(',', true);
-            Dictionary<string, string> arguments = new Dictionary<string, string>();
-
-            foreach (string argument in rawArguments)
-            {
-                int equalsIndex = argument.IndexOf('=', true);
-                if (equalsIndex == -1)
-                {
-                    throw new TranslationException(TranslationErrorCode.ArgumentWithoutValue);
-                }
-
-                string argumentName = argument.Substring(0, equalsIndex).Trim();
-                string argumentValue = argument.Substring(equalsIndex + 1, argument.Length - equalsIndex - 1).Trim();
-
-                if (!arguments.TryAdd(argumentName, argumentValue))
-                {
-                    throw new TranslationException(TranslationErrorCode.ArgumentDuplicate);
-                }   
-            }
+            Dictionary<string, string> arguments = ParseArguments(key.Substring(openBracketIndex + 1, key.Length - openBracketIndex - 2));
 
             translation = translation.ReplacePlaceholders(placeholderName =>
             {
@@ -126,6 +97,40 @@ namespace SkyDesert.Localization
             }, true);
 
             return TranslateRecursive(translation, parseArguments, maxRecursionDepth);
+        }
+
+        protected string GetTranslation(string key)
+        {
+            if (!Locale.Translations.TryGetValue(key, out string translation))
+            {
+                throw new TranslationException(TranslationErrorCode.KeyNotFound);
+            }
+            return translation;
+        }
+
+        protected virtual Dictionary<string, string> ParseArguments(string input)
+        {
+            string[] arguments = input.Split(',', true);
+            Dictionary<string, string> argumentPairs = new Dictionary<string, string>();
+
+            foreach (string argument in arguments)
+            {
+                int equalsIndex = argument.IndexOf('=', true);
+                if (equalsIndex == -1)
+                {
+                    throw new TranslationException(TranslationErrorCode.ArgumentWithoutValue);
+                }
+
+                string argumentName = argument.Substring(0, equalsIndex).Trim();
+                string argumentValue = argument.Substring(equalsIndex + 1, argument.Length - equalsIndex - 1).Trim();
+
+                if (!argumentPairs.TryAdd(argumentName, argumentValue))
+                {
+                    throw new TranslationException(TranslationErrorCode.ArgumentDuplicate);
+                }
+            }
+
+            return argumentPairs;
         }
 
         public string TranslatePlaceholders(string input, bool parseArguments = true, int maxRecursionDepth = 32)
