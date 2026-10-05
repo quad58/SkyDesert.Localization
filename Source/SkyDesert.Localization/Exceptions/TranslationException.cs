@@ -4,9 +4,16 @@ namespace SkyDesert.Localization
 {
     public class TranslationException : Exception
     {
-        public enum ErrorCode
+        public TranslationException(TranslationErrorCode errorCode) : base(GetMessage(errorCode))
         {
-            KeyNotFound
+            ErrorCode = errorCode;
+        }
+
+        public readonly TranslationErrorCode ErrorCode;
+
+        protected static string GetMessage(TranslationErrorCode errorCode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

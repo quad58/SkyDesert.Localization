@@ -1,5 +1,6 @@
 // TODO: Exceptions
 
+using SkyDesert.Extensions;
 using System;
 
 namespace SkyDesert.Localization
@@ -24,19 +25,26 @@ namespace SkyDesert.Localization
 
         private bool TryParseLine(string line, out string key, out string translation)
         {
-            if (string.IsNullOrWhiteSpace(line) || line[0] == '#')
+            int sharpIndex = line.IndexOf('#', true);
+            if (sharpIndex != -1)
+            {
+                line = line.Substring(0, sharpIndex + 1);
+            }
+            if (string.IsNullOrWhiteSpace(line))
             {
                 key = null;
                 translation = null;
                 return false;
             }
-            else
+
+            int equalsIndex = line.IndexOf('=', true);
+            if (equalsIndex == -1)
             {
-                int equalsIndex = line.IndexOf('=');
-                key = line.Substring(0, equalsIndex);
-                translation = line.Substring(equalsIndex + 1);
-                return true;
+                throw new LocaleParsingException();
             }
+            key = line.Substring(0, equalsIndex);
+            translation = line.Substring(equalsIndex + 1);
+            return true;
         }
     }
 }

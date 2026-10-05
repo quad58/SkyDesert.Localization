@@ -68,7 +68,7 @@ namespace SkyDesert.Localization
             {
                 if (!Locale.Translations.TryGetValue(key, out translation))
                 {
-                    throw new TranslationException();
+                    throw new TranslationException(TranslationErrorCode.KeyNotFound);
                 }
                 return TranslateRecursive(translation, formatArguments, maxRecursionDepth);
             }
@@ -79,26 +79,26 @@ namespace SkyDesert.Localization
             {
                 if (!Locale.Translations.TryGetValue(key, out translation))
                 {
-                    throw new TranslationException();
+                    throw new TranslationException(TranslationErrorCode.KeyNotFound);
                 }
                 return TranslateRecursive(translation, formatArguments, maxRecursionDepth);
             }
 
             if (key.IndexOf(')', true) != key.Length - 1)
             {
-                throw new TranslationException();
+                throw new TranslationException(TranslationErrorCode.UclosedBracket);
             }
 
             string keyName = key.Substring(0, openBracketIndex).Trim();
 
             if (string.IsNullOrEmpty(keyName))
             {
-                throw new TranslationException();
+                throw new TranslationException(TranslationErrorCode.EmptyKey);
             }
 
             if (!Locale.Translations.TryGetValue(keyName, out translation))
             {
-                throw new TranslationException();
+                throw new TranslationException(TranslationErrorCode.KeyNotFound);
             }
 
             string[] rawArguments = key.Substring(openBracketIndex + 1, key.Length - openBracketIndex - 2).Split(',', true);
@@ -109,7 +109,7 @@ namespace SkyDesert.Localization
                 int equalsIndex = argument.IndexOf('=', true);
                 if (equalsIndex == -1)
                 {
-                    throw new TranslationException();
+                    throw new TranslationException(TranslationErrorCode.ArgumentWithoutValue);
                 }
 
                 string argumentName = argument.Substring(0, equalsIndex).Trim();
@@ -117,8 +117,8 @@ namespace SkyDesert.Localization
 
                 if (!arguments.TryAdd(argumentName, argumentValue))
                 {
-                    throw new TranslationException();
-                }
+                    throw new TranslationException(TranslationErrorCode.ArgumentDuplicate);
+                }   
             }
 
             translation = translation.ReplacePlaceholders(placeholderName =>
@@ -137,6 +137,7 @@ namespace SkyDesert.Localization
         {
             if (input.IndexOf('{', true) == -1)
             {
+                // input has no placeholders
                 return input;
             }
             return input.ReplacePlaceholders(placeholderName =>
