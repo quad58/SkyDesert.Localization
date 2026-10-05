@@ -32,11 +32,7 @@ namespace SkyDesert.Localization
                 translation = Translate(key, parseArguments, maxRecursionDepth);
                 return true;
             }
-            catch (ArgumentException)
-            {
-                throw;
-            }
-            catch
+            catch (TranslationException)
             {
                 translation = null;
                 return false;
