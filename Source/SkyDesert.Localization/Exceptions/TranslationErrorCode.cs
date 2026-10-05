@@ -3,7 +3,7 @@
     public enum TranslationErrorCode
     {
         KeyNotFound,
-        UclosedBracket,
+        UnclosedBracket,
         EmptyKey,
         ArgumentWithoutValue,
         ArgumentDuplicate
