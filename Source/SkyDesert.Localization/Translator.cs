@@ -57,7 +57,7 @@ namespace SkyDesert.Localization
         }
 
         // TODO: Exceptions
-        protected virtual string TranslateCore(string key, bool formatArguments, int maxRecursionDepth)
+        protected virtual string TranslateCore(string key, bool formatArguments, int maxRecursionDepth) // <- rename to TranslateStep
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Value cannot be empty or white space.", nameof(key));
