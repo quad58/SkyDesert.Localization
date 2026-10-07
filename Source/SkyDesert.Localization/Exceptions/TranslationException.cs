@@ -4,39 +4,33 @@ namespace SkyDesert.Localization
 {
     public class TranslationException : Exception
     {
-        public TranslationException(TranslationErrorCode errorCode) : base()
-        {
-            ErrorCode = errorCode;
-        }
-
-        public TranslationException(TranslationErrorCode errorCode, string key = null, Locale locale = null) :
-            base(GetMessage(new TranslationExceptionContext(errorCode, key, locale)))
+        public TranslationException(TranslationErrorCode errorCode, string key) : base(GetMessage(errorCode, key))
         {
             ErrorCode = errorCode;
             Key = key;
-            Locale = locale;
         }
 
-        public readonly TranslationErrorCode ErrorCode;
-        public readonly string Key;
-        public readonly Locale Locale;
-
-        protected static string GetMessage(TranslationExceptionContext context)
+        public TranslationException(TranslationArgumentsParsingException innerException, string key) :
+            base(GetMessage(TranslationErrorCode.InvalidArguments, key), innerException)
         {
-            switch (context.ErrorCode)
+            ErrorCode = TranslationErrorCode.InvalidArguments;
+            Key = key;
+        }
+
+        public TranslationErrorCode ErrorCode { get; }
+        public string Key { get; }
+
+        protected static string GetMessage(TranslationErrorCode errorCode, string key)
+        {
+            string message = $" Key: \"{key}\"";
+            switch (errorCode)
             {
-                case TranslationErrorCode.KeyNotFound:
-                    return $"Translation with key \"{context.Key}\" not found in \"{context.Locale}\" locale.";
                 case TranslationErrorCode.UnclosedBracket:
-                    return $"Unclosed bracket in key \"{context.Key}\".";
+                    return "Unclosed bracket or text after bracket." + message;
                 case TranslationErrorCode.ArgumentsWithoutKeyName:
-                    return $"Arguments provided without a key name in key \"{context.Key}\".";
-                case TranslationErrorCode.ArgumentWithoutValue:
-                    return $"Argument without a value in key \"{context.Key}\".";
-                case TranslationErrorCode.ArgumentDuplicate:
-                    return $"Argument duplicate in key \"{context.Key}\".";
+                    return "Arguments provided without a key name." + message;
             }
-            return null;
+            return "Unknown error." + message;
         }
     }
 }

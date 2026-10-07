@@ -10,8 +10,8 @@ namespace SkyDesert.Localization
             Column = column;
         }
 
-        public readonly LocaleParsingErrorCode ErrorCode;
-        public readonly int Column;
+        public LocaleParsingErrorCode ErrorCode { get; }
+        public int Column { get; }
 
         protected static string GetMessage(LocaleParsingErrorCode errorCode, int column)
         {

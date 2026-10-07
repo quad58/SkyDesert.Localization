@@ -2,7 +2,8 @@
 {
     public enum TranslationErrorCode
     {
-        KeyNotFound,
-        UnclosedBracket
+        UnclosedBracket,
+        ArgumentsWithoutKeyName,
+        InvalidArguments
     }
 }

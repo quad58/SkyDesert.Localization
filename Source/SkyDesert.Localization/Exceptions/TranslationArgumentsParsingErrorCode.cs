@@ -2,7 +2,6 @@
 {
     public enum TranslationArgumentsParsingErrorCode
     {
-        ArgumentsWithoutKeyName,
         ArgumentWithoutValue,
         ArgumentDuplicate
     }

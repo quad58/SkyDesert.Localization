@@ -1,6 +1,7 @@
 using SkyDesert.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SkyDesert.Localization
 {
@@ -11,7 +12,7 @@ namespace SkyDesert.Localization
             Locale = locale ?? throw new ArgumentNullException(nameof(locale));
         }
 
-        protected readonly Locale Locale;
+        protected Locale Locale { get; }
 
         public string Translate(string key, string fallback, bool parseArguments = true, int maxRecursionDepth = 32)
         {
@@ -27,48 +28,57 @@ namespace SkyDesert.Localization
 
         public bool TryTranslate(string key, out string translation, bool parseArguments = true, int maxRecursionDepth = 32)
         {
-            try
+            if (!TryTranslateCore(key, out translation, parseArguments, maxRecursionDepth))
             {
-                translation = Translate(key, parseArguments, maxRecursionDepth);
-                return true;
-            }
-            catch (TranslationException)
-            {
-                translation = null;
                 return false;
             }
+            translation = Unescape(translation);
+            return true;
         }
 
         public string Translate(string key, bool parseArguments = true, int maxRecursionDepth = 32)
         {
-            string translation = TranslateCore(key, parseArguments, maxRecursionDepth);
-            translation = translation.Replace(@"\(", "(");
-            translation = translation.Replace(@"\)", ")");
-            translation = translation.Replace(@"\=", "=");
-            translation = translation.Replace(@"\,", ",");
-            translation = translation.Replace(@"\{", "{");
-            translation = translation.Replace(@"\}", "}");
-            translation = translation.Replace(@"\\", "\\");
-            return translation;
+            if (!TryTranslateCore(key, out string translation, parseArguments, maxRecursionDepth))
+            {
+                throw new TranslationKeyNotFoundException(key, Locale);
+            }
+            return Unescape(translation);
         }
 
-        protected virtual string TranslateCore(string key, bool parseArguments, int maxRecursionDepth)
+        protected string Unescape(string input)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+
+            StringBuilder stringBuilder = new StringBuilder(input);
+            stringBuilder.Replace(@"\(", "(");
+            stringBuilder.Replace(@"\)", ")");
+            stringBuilder.Replace(@"\=", "=");
+            stringBuilder.Replace(@"\,", ",");
+            stringBuilder.Replace(@"\{", "{");
+            stringBuilder.Replace(@"\}", "}");
+            stringBuilder.Replace(@"\\", "\\");
+            return stringBuilder.ToString();
+        }
+
+        protected virtual bool TryTranslateCore(string key, out string translation, bool parseArguments, int maxRecursionDepth)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Value cannot be empty or white space.", nameof(key));
 
-            string translation;
-
-            if (!parseArguments)
+            int openBracketIndex = -1;
+            if (parseArguments)
             {
-                return TranslateRecursive(GetTranslation(key), parseArguments, maxRecursionDepth);
+                openBracketIndex = key.IndexOf('(', true);
             }
-
-            int openBracketIndex = key.IndexOf('(', true);
 
             if (openBracketIndex == -1)
             {
-                return TranslateRecursive(GetTranslation(key), parseArguments, maxRecursionDepth);
+                if (!TryGetTranslation(key, out translation))
+                {
+                    return false;
+                }
+                translation = TranslateRecursive(translation, parseArguments, maxRecursionDepth);
+                return true;
             }
 
             if (key.IndexOf(')', true) != key.Length - 1)
@@ -83,7 +93,10 @@ namespace SkyDesert.Localization
                 throw new TranslationException(TranslationErrorCode.ArgumentsWithoutKeyName, key);
             }
 
-            translation = GetTranslation(keyName);
+            if (!TryGetTranslation(keyName, out translation))
+            {
+                return false;
+            }
 
             try
             {
@@ -98,21 +111,22 @@ namespace SkyDesert.Localization
                     return '{' + placeholderName + '}';
                 }, true);
 
-                return TranslateRecursive(translation, parseArguments, maxRecursionDepth);
+                translation = TranslateRecursive(translation, parseArguments, maxRecursionDepth);
+                return true;
             }
             catch (TranslationArgumentsParsingException translationArgumentsParsingException)
             {
-                throw new TranslationException(translationException.ErrorCode, key);
+                throw new TranslationException(translationArgumentsParsingException, key);
             }
         }
 
-        protected string GetTranslation(string key)
+        protected bool TryGetTranslation(string key, out string translation)
         {
-            if (!Locale.Translations.TryGetValue(key, out string translation))
+            if (Locale.Translations.TryGetValue(key, out translation))
             {
-                throw new TranslationException(TranslationErrorCode.KeyNotFound, key, Locale);
+                return true;
             }
-            return translation;
+            return false;
         }
 
         protected virtual Dictionary<string, string> ParseArguments(string input)
@@ -125,7 +139,7 @@ namespace SkyDesert.Localization
                 int equalsIndex = argument.IndexOf('=', true);
                 if (equalsIndex == -1)
                 {
-                    throw new TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode.ArgumentWithoutValue);
+                    throw new TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode.ArgumentWithoutValue, argument);
                 }
 
                 string argumentName = argument.Substring(0, equalsIndex).Trim();
@@ -133,7 +147,7 @@ namespace SkyDesert.Localization
 
                 if (!argumentPairs.TryAdd(argumentName, argumentValue))
                 {
-                    throw new TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode.ArgumentDuplicate);
+                    throw new TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode.ArgumentDuplicate, argument);
                 }
             }
 
@@ -149,14 +163,11 @@ namespace SkyDesert.Localization
             }
             return input.ReplacePlaceholders(placeholderName =>
             {
-                try
+                if (TryTranslateCore(placeholderName, out string translation, parseArguments, maxRecursionDepth))
                 {
-                    return TranslateCore(placeholderName, parseArguments, maxRecursionDepth);
+                    return translation;
                 }
-                catch
-                {
-                    return '{' + placeholderName + '}';
-                }
+                return '{' + placeholderName + '}';
             }, true);
         }
 
