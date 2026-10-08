@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace SkyDesert.Localization
+﻿namespace SkyDesert.Localization
 {
-    public class TranslationArgumentsParsingException : Exception
+    public class TranslationArgumentsParsingException : LocalizationException
     {
-        public TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode errorCode, string argument) : base(GetMessage(errorCode, argument))
+        public TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode errorCode, string argument) : base("Translation arguments parsing error.")
         {
             ErrorCode = errorCode;
             Argument = argument;
@@ -13,17 +11,20 @@ namespace SkyDesert.Localization
         public TranslationArgumentsParsingErrorCode ErrorCode { get; }
         public string Argument { get; }
 
-        protected static string GetMessage(TranslationArgumentsParsingErrorCode errorCode, string argument)
+        public override string Message
         {
-            string message = $" Argument: \"{argument}\".";
-            switch (errorCode)
+            get
             {
-                case TranslationArgumentsParsingErrorCode.ArgumentWithoutValue:
-                    return "Argument without a value." + message;
-                case TranslationArgumentsParsingErrorCode.ArgumentDuplicate:
-                    return "Argument duplicate." + message;
+                string additionalInfo = $" Argument: \"{Argument}\".";
+                switch (ErrorCode)
+                {
+                    case TranslationArgumentsParsingErrorCode.ArgumentWithoutValue:
+                        return "Argument without a value." + additionalInfo;
+                    case TranslationArgumentsParsingErrorCode.ArgumentDuplicate:
+                        return "Argument duplicate." + additionalInfo;
+                }
+                return "Unknown error." + additionalInfo;
             }
-            return "Unknown error." + message;
         }
     }
 }

@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace SkyDesert.Localization
 {
-    public class Locale
+    public class Locale : ITranslationSource
     {
         public Locale(string code)
         {
-            Code = code;
+            LanguageCode = code;
             _Translations = new Dictionary<string, string>();
         }
 
         public Locale(string code, IEnumerable<KeyValuePair<string, string>> translations)
         {
-            Code = code;
+            LanguageCode = code;
             _Translations = new Dictionary<string, string>(translations);
         }
 
-        public string Code { get; } // Should be an IETF BCP 47 language tag 
+        public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
 
         protected Dictionary<string, string> _Translations;
         public IReadOnlyDictionary<string, string> Translations => _Translations;
@@ -45,9 +45,27 @@ namespace SkyDesert.Localization
             return _Translations.Remove(key);
         }
 
+        public bool TryGetTranslation(string key, out string translation)
+        {
+            if (Translations.TryGetValue(key, out translation))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public string GetTranslation(string key)
+        {
+            if (!Translations.TryGetValue(key, out string translation))
+            {
+                throw new TranslationNotFoundException(key);
+            }
+            return translation;
+        }
+
         public override string ToString()
         {
-            return Code;
+            return LanguageCode;
         }
     }
 }

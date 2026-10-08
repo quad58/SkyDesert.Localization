@@ -13,17 +13,17 @@ namespace SkyDesert.Localization
 
         public LocaleRegistry(IEnumerable<Locale> locales)
         {
-            _Locales = locales.ToDictionary((locale) => locale.Code);
+            _Locales = locales.ToDictionary((locale) => locale.LanguageCode);
         }
 
         public Locale Current { get; private set; }
 
         public string CurrentLanguage
         {
-            get => Current.Code;
+            get => Current.LanguageCode;
             set
             {
-                if (Current != null && Current.Code == value) return;
+                if (Current != null && Current.LanguageCode == value) return;
                 if (!_Locales.TryGetValue(value, out Locale locale))
                 {
                     throw new KeyNotFoundException($"Locale with code {value} not found.");
@@ -40,7 +40,7 @@ namespace SkyDesert.Localization
 
         public void AddLocale(Locale locale)
         {
-            _Locales.Add(locale.Code, locale);
+            _Locales.Add(locale.LanguageCode, locale);
         }
 
         public void AddLocales(IEnumerable<Locale> locales)
@@ -58,7 +58,7 @@ namespace SkyDesert.Localization
 
         public bool RemoveLocale(Locale locale)
         {
-            return _Locales.Remove(locale.Code);
+            return _Locales.Remove(locale.LanguageCode);
         }
     }
 }
