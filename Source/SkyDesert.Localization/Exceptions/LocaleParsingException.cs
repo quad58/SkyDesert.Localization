@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace SkyDesert.Localization
+﻿namespace SkyDesert.Localization
 {
-    public class LocaleParsingException : Exception
+    public class LocaleParsingException : LocalizationException
     {
-        public LocaleParsingException(LocaleParsingErrorCode errorCode, int column) : base(GetMessage(errorCode, column))
+        public LocaleParsingException(LocaleParsingErrorCode errorCode, int column) : base("Locale parsing error.")
         {
             ErrorCode = errorCode;
             Column = column;
@@ -13,16 +11,19 @@ namespace SkyDesert.Localization
         public LocaleParsingErrorCode ErrorCode { get; }
         public int Column { get; }
 
-        protected static string GetMessage(LocaleParsingErrorCode errorCode, int column)
+        public override string Message
         {
-            switch (errorCode)
+            get
             {
-                case LocaleParsingErrorCode.MissingEqualsSymbol:
-                    return "";
-                case LocaleParsingErrorCode.MissingKey:
-                    return "";
+                switch (ErrorCode)
+                {
+                    case LocaleParsingErrorCode.MissingEqualsSymbol:
+                        return "";
+                    case LocaleParsingErrorCode.MissingKey:
+                        return "";
+                }
+                return "Unknown error.";
             }
-            return null;
         }
     }
 }

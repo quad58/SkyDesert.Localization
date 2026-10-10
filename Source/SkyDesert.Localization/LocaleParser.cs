@@ -1,11 +1,12 @@
 using SkyDesert.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace SkyDesert.Localization
 {
     public class LocaleParser
     {
-        public Locale Parse(string input, string localeCode)
+        public LocaleParsingResult Parse(string input, string localeCode)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (localeCode == null) throw new ArgumentNullException(nameof(localeCode));
@@ -23,6 +24,11 @@ namespace SkyDesert.Localization
             }
 
             return locale;
+        }
+
+        public IReadOnlyList<LocaleParsingDiagnostic> Validate(string input)
+        {
+
         }
 
         public bool TryParseLine(string input, out string key, out string translation)
