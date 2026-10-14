@@ -1,6 +1,6 @@
 ﻿namespace SkyDesert.Localization
 {
-    public enum TranslationArgumentsParsingErrorCode
+    public enum TranslationInvalidArgumentsErrorCode
     {
         ArgumentWithoutValue,
         ArgumentDuplicate

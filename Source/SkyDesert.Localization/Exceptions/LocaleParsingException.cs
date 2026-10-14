@@ -17,10 +17,10 @@
             {
                 switch (ErrorCode)
                 {
-                    case LocaleParsingErrorCode.MissingEqualsSymbol:
-                        return "";
-                    case LocaleParsingErrorCode.MissingKey:
-                        return "";
+                    case LocaleParsingErrorCode.KeyWithoutValue:
+                        return "Key has no value (missing equals symbol).";
+                    case LocaleParsingErrorCode.EmptyKey:
+                        return "Value does not have a key (nothing before equals symbol).";
                 }
                 return "Unknown error.";
             }

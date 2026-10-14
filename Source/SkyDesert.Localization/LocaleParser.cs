@@ -6,29 +6,59 @@ namespace SkyDesert.Localization
 {
     public class LocaleParser
     {
+        private delegate void LineResolver(string key, string transltion);
+        private delegate void ExceptionResolver(LocaleParsingException exception, int line);
+
         public LocaleParsingResult Parse(string input, string localeCode)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
             if (localeCode == null) throw new ArgumentNullException(nameof(localeCode));
 
             Locale locale = new Locale(localeCode);
+            List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
+
+            ParseLines(input, (key, translation) =>
+            {
+                locale.AddOrUpdateTranslation(key, translation);
+            }, (exception, line) =>
+            {
+                diagnostics.Add(new LocaleParsingDiagnostic(exception, line));
+            });
+
+            return new LocaleParsingResult(locale, diagnostics);
+        }
+
+        public IReadOnlyList<LocaleParsingDiagnostic> Validate(string input)
+        {
+            List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
+
+            ParseLines(input, (_, _) => { }, (exception, line) =>
+            {
+                diagnostics.Add(new LocaleParsingDiagnostic(exception, line));
+            });
+
+            return diagnostics;
+        }
+
+        private void ParseLines(string input, LineResolver resolveLine, ExceptionResolver resolveException)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
 
             string[] lines = input.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = RemoveComment(lines[i]);
-                if (!string.IsNullOrEmpty(line) && TryParseLine(line, out string key, out string translation))
+                if (string.IsNullOrEmpty(line)) continue;
+
+                try
                 {
-                    locale.AddOrUpdateTranslation(key, translation);
+                    ParseLine(line, out string key, out string translation);
+                    resolveLine(key, translation);
+                }
+                catch (LocaleParsingException exception)
+                {
+                    resolveException(exception, i + 1);
                 }
             }
-
-            return locale;
-        }
-
-        public IReadOnlyList<LocaleParsingDiagnostic> Validate(string input)
-        {
-
         }
 
         public bool TryParseLine(string input, out string key, out string translation)
@@ -54,13 +84,13 @@ namespace SkyDesert.Localization
             int equalsIndex = input.IndexOf('=', true);
             if (equalsIndex == -1)
             {
-                throw new LocaleParsingException(LocaleParsingErrorCode.MissingEqualsSymbol, input.Length - 1);
+                throw new LocaleParsingException(LocaleParsingErrorCode.KeyWithoutValue, input.Length - 1);
             }
 
             key = input.Substring(0, equalsIndex);
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new LocaleParsingException(LocaleParsingErrorCode.MissingKey, 0);
+                throw new LocaleParsingException(LocaleParsingErrorCode.EmptyKey, 0);
             }
 
             translation = input.Substring(equalsIndex + 1);

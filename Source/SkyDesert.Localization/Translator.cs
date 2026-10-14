@@ -98,8 +98,13 @@ namespace SkyDesert.Localization
                 return true;
             }
 
-            if (key.IndexOf(')', true) != key.Length - 1)
+            int closeBracketIndex = key.IndexOf(')', true);
+            if (closeBracketIndex != key.Length - 1)
             {
+                if (closeBracketIndex != -1)
+                {
+                    throw new TranslationException(TranslationErrorCode.TextAfterBracket, key);
+                }
                 throw new TranslationException(TranslationErrorCode.UnclosedBracket, key);
             }
 
@@ -131,7 +136,7 @@ namespace SkyDesert.Localization
                 translation = TranslateRecursive(translation, options, options.MaxRecursionDepth);
                 return true;
             }
-            catch (TranslationArgumentsParsingException translationArgumentsParsingException)
+            catch (TranslationInvalidArgumentsException translationArgumentsParsingException)
             {
                 throw new TranslationException(translationArgumentsParsingException, key);
             }
@@ -147,7 +152,7 @@ namespace SkyDesert.Localization
                 int equalsIndex = argument.IndexOf('=', true);
                 if (equalsIndex == -1)
                 {
-                    throw new TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode.ArgumentWithoutValue, argument);
+                    throw new TranslationInvalidArgumentsException(TranslationInvalidArgumentsErrorCode.ArgumentWithoutValue, argument);
                 }
 
                 string argumentName = argument.Substring(0, equalsIndex).Trim();
@@ -155,7 +160,7 @@ namespace SkyDesert.Localization
 
                 if (!argumentPairs.TryAdd(argumentName, argumentValue))
                 {
-                    throw new TranslationArgumentsParsingException(TranslationArgumentsParsingErrorCode.ArgumentDuplicate, argument);
+                    throw new TranslationInvalidArgumentsException(TranslationInvalidArgumentsErrorCode.ArgumentDuplicate, argument);
                 }
             }
 

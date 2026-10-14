@@ -8,7 +8,7 @@
             Key = key;
         }
 
-        public TranslationException(TranslationArgumentsParsingException innerException, string key) : base(DefaultMessage, innerException)
+        public TranslationException(TranslationInvalidArgumentsException innerException, string key) : base(DefaultMessage, innerException)
         {
             ErrorCode = TranslationErrorCode.InvalidArguments;
             Key = key;
@@ -22,15 +22,18 @@
         public override string Message {
             get
             {
-                string additionalInfo = $" Key: \"{Key}\"";
                 switch (ErrorCode)
                 {
                     case TranslationErrorCode.UnclosedBracket:
-                        return "Unclosed bracket or text after bracket." + additionalInfo;
+                        return "Unclosed bracket.";
+                    case TranslationErrorCode.TextAfterBracket:
+                        return "Text after bracket.";
                     case TranslationErrorCode.ArgumentsWithoutKeyName:
-                        return "Arguments provided without a key name." + additionalInfo;
+                        return "Arguments provided without a key name.";
+                    case TranslationErrorCode.InvalidArguments:
+                        return "Arguments are invalid.";
                 }
-                return "Unknown error." + additionalInfo;
+                return "Unknown error.";
             }
         }
     }

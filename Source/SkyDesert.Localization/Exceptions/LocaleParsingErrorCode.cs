@@ -2,7 +2,7 @@
 {
     public enum LocaleParsingErrorCode
     {
-        MissingEqualsSymbol,
-        MissingKey
+        KeyWithoutValue,
+        EmptyKey
     }
 }
