@@ -37,7 +37,7 @@ namespace SkyDesert.Localization
                 throw new TranslationNotFoundException(key);
             }
 
-            return Unescape(translation);
+            return translation;
         }
 
         public string Translate(string key)
