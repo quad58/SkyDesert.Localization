@@ -4,7 +4,7 @@ namespace SkyDesert.Localization
 {
     public class LocalizationException : Exception
     {
-        public LocalizationException() : base(DefaultMessage)
+        public LocalizationException() : base("Localization error.")
         {
 
         }
@@ -18,9 +18,5 @@ namespace SkyDesert.Localization
         {
 
         }
-
-        private const string DefaultMessage = "Localization error.";
-
-        public override string Message => DefaultMessage;
     }
 }
