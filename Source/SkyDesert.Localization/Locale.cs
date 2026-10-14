@@ -54,15 +54,6 @@ namespace SkyDesert.Localization
             return false;
         }
 
-        public string GetTranslation(string key)
-        {
-            if (!Translations.TryGetValue(key, out string translation))
-            {
-                throw new TranslationNotFoundException(key);
-            }
-            return translation;
-        }
-
         public override string ToString()
         {
             return LanguageCode;
