@@ -14,7 +14,7 @@
         public LocaleParsingDiagnostic(LocaleParsingException localeParsingException, int line) :
             this(localeParsingException.ErrorCode, localeParsingException.Message, line, localeParsingException.Column)
         {
-            Line = line;
+
         }
 
         public LocaleParsingErrorCode ErrorCode { get; }
