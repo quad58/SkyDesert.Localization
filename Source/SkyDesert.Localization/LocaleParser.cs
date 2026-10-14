@@ -15,6 +15,7 @@ namespace SkyDesert.Localization
 
             Locale locale = new Locale(localeCode);
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
+            bool success = true;
 
             ParseLines(input, (key, translation) =>
             {
@@ -22,9 +23,10 @@ namespace SkyDesert.Localization
             }, (exception, line) =>
             {
                 diagnostics.Add(new LocaleParsingDiagnostic(exception, line));
+                success = false;
             });
 
-            return new LocaleParsingResult(locale, diagnostics);
+            return new LocaleParsingResult(success, locale, diagnostics);
         }
 
         public IReadOnlyList<LocaleParsingDiagnostic> Validate(string input)

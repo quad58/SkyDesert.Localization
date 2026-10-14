@@ -4,9 +4,9 @@ namespace SkyDesert.Localization
 {
     public class LocaleParsingResult
     {
-        public LocaleParsingResult(Locale locale, IReadOnlyList<LocaleParsingDiagnostic> diagnostics)
+        public LocaleParsingResult(bool success, Locale locale, IReadOnlyList<LocaleParsingDiagnostic> diagnostics)
         {
-            Success = diagnostics.Count > 0;
+            Success = success;
             Locale = locale;
             Diagnostics = diagnostics;
         }
