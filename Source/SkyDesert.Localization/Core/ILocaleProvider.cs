@@ -1,6 +1,4 @@
-﻿using SkyDesert.Localization.Core;
-
-namespace SkyDesert.Localization
+﻿namespace SkyDesert.Localization.Core
 {
     public interface ILocaleProvider : IProvider<Locale>
     {

@@ -1,7 +1,6 @@
-﻿using SkyDesert.Localization.Core;
-using System;
+﻿using System;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Core
 {
     public interface ILocaleChangeNotifier
     {
