@@ -13,7 +13,7 @@
 
         public override string ToString()
         {
-            return $"({Line + 1}, {Character + 1})";
+            return $"Line {Line + 1}, Character {Character + 1}";
         }
     }
 }

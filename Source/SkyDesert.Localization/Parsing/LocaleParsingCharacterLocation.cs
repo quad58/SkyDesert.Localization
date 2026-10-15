@@ -11,7 +11,7 @@
 
         public override string ToString()
         {
-            return $"({Character + 1})";
+            return $"Character {Character + 1}";
         }
     }
 }
