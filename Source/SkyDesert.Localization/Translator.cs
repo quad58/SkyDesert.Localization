@@ -7,9 +7,9 @@ namespace SkyDesert.Localization
 {
     public sealed class Translator : ITranslator<TranslationOptions>
     {
-        public Translator(Locale locale)
+        public Translator(ITranslationSource translationSource)
         {
-            TranslationSource = locale ?? throw new ArgumentNullException(nameof(locale));
+            TranslationSource = translationSource ?? throw new ArgumentNullException(nameof(translationSource));
         }
 
         private ITranslationSource TranslationSource { get; }
