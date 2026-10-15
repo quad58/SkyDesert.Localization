@@ -2,14 +2,14 @@
 {
     public class LocaleParsingException : LocalizationException
     {
-        public LocaleParsingException(LocaleParsingErrorCode errorCode, int column) : base("Locale parsing error.")
+        public LocaleParsingException(LocaleParsingErrorCode errorCode, int character) : base("Locale parsing error.")
         {
             ErrorCode = errorCode;
-            Column = column;
+            Character = character;
         }
 
         public LocaleParsingErrorCode ErrorCode { get; }
-        public int Column { get; }
+        public int Character { get; }
 
         public override string Message
         {

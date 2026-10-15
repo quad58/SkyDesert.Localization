@@ -9,14 +9,14 @@
             Location = location;
         }
 
-        public LocaleParsingDiagnostic(LocaleParsingErrorCode errorCode, string message, int line, int column) :
-            this(errorCode, message, new LocaleParsingStringLocation(line, column))
+        public LocaleParsingDiagnostic(LocaleParsingErrorCode errorCode, string message, int line, int character) :
+            this(errorCode, message, new LocaleParsingStringLocation(line, character))
         {
 
         }
 
         public LocaleParsingDiagnostic(LocaleParsingException localeParsingException, int line) :
-            this(localeParsingException.ErrorCode, localeParsingException.Message, line, localeParsingException.Column)
+            this(localeParsingException.ErrorCode, localeParsingException.Message, line, localeParsingException.Character)
         {
 
         }

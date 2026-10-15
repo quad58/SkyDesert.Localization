@@ -2,18 +2,18 @@
 {
     public class LocaleParsingStringLocation : LocaleParsingLocation
     {
-        public LocaleParsingStringLocation(int line, int column)
+        public LocaleParsingStringLocation(int line, int character)
         {
             Line = line;
-            Column = column;
+            Character = character;
         }
 
         public int Line { get; }
-        public int Column { get; }
+        public int Character { get; }
 
         public override string ToString()
         {
-            return $"({Line + 1}, {Column + 1})";
+            return $"({Line + 1}, {Character + 1})";
         }
     }
 }
