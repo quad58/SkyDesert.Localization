@@ -22,7 +22,7 @@ namespace SkyDesert.Localization
                 locale.AddOrUpdateTranslation(key, translation);
             }, (exception, line) =>
             {
-                diagnostics.Add(new LocaleParsingDiagnostic(exception, line));
+                diagnostics.Add(new LocaleParsingDiagnostic(exception.ErrorCode, exception.Message, new LocaleParsingStringLocation(line, exception.Character)));
                 success = false;
             });
 
@@ -35,7 +35,7 @@ namespace SkyDesert.Localization
 
             ParseLines(input, (_, _) => { }, (exception, line) =>
             {
-                diagnostics.Add(new LocaleParsingDiagnostic(exception, line));
+                diagnostics.Add(new LocaleParsingDiagnostic(exception.ErrorCode, exception.Message, new LocaleParsingStringLocation(line, exception.Character)));
             });
 
             return diagnostics;
