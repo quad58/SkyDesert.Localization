@@ -44,7 +44,7 @@ namespace SkyDesert.Localization.Parsing
 
         private LocaleParsingDiagnostic CreateStringDiagnostic(LocaleParsingException exception, int line)
         {
-            return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingStringLocation(line, ((LocaleParsingCharacterLocation) exception.Location).Character));
+            return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingTextLocation(line, ((LocaleParsingCharacterLocation) exception.Location).Character));
         }
 
         private void ParseLines(string input, LineResolver resolveLine, ExceptionResolver resolveException)

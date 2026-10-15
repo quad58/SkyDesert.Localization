@@ -1,8 +1,8 @@
 ﻿namespace SkyDesert.Localization.Parsing
 {
-    public class LocaleParsingStringLocation : LocaleParsingLocation
+    public class LocaleParsingTextLocation : LocaleParsingLocation
     {
-        public LocaleParsingStringLocation(int line, int character)
+        public LocaleParsingTextLocation(int line, int character)
         {
             Line = line;
             Character = character;
