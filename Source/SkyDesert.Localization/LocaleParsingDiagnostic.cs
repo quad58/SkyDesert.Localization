@@ -1,6 +1,4 @@
-﻿// TODO: Rewrite on StringBuilder
-
-namespace SkyDesert.Localization
+﻿namespace SkyDesert.Localization
 {
     public class LocaleParsingDiagnostic
     {

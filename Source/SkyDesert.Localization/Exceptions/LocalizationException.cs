@@ -1,7 +1,6 @@
-﻿// TODO: Rewrite on StringBuilder
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SkyDesert.Localization
 {
@@ -26,35 +25,42 @@ namespace SkyDesert.Localization
 
         public override string ToString()
         {
-            string output = GetType().FullName;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(GetType().FullName);
             if (!string.IsNullOrEmpty(Message))
             {
-                output += $": {Message}";
+                stringBuilder.Append($": {Message}");
             }
 
-            using IEnumerator<Detail> enumerator = Details.GetEnumerator();
-            if (enumerator.MoveNext())
+            using (IEnumerator<Detail> enumerator = Details.GetEnumerator())
             {
-                output += " (";
-                output += enumerator.Current.ToString();
-
-                while (enumerator.MoveNext())
+                if (enumerator.MoveNext())
                 {
-                    output += ", ";
-                    output += enumerator.Current.ToString();
+                    stringBuilder.Append(" (");
+                    stringBuilder.Append(enumerator.Current.ToString());
+
+                    while (enumerator.MoveNext())
+                    {
+                        stringBuilder.Append(", ");
+                        stringBuilder.Append(enumerator.Current.ToString());
+                    }
+                    stringBuilder.Append(")");
                 }
-                output += ")";
             }
 
             if (InnerException != null)
             {
-                output += " ---> " + InnerException.ToString();
-                output += Environment.NewLine + "   --- End of inner exception stack trace ---";
+                stringBuilder.Append(" ---> ");
+                stringBuilder.Append(InnerException.ToString());
+                stringBuilder.Append(Environment.NewLine);
+                stringBuilder.Append("   --- End of inner exception stack trace ---");
             }
 
-            output += Environment.NewLine + StackTrace;
+            stringBuilder.Append(Environment.NewLine);
+            stringBuilder.Append(StackTrace);
 
-            return output;
+            return stringBuilder.ToString();
         }
 
         protected struct Detail
