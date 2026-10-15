@@ -24,7 +24,7 @@ namespace SkyDesert.Localization
         }
 
         public LocaleParsingErrorCode ErrorCode { get; }
-        public LocaleParsingLocation Location;
+        public LocaleParsingLocation Location { get; }
         public string Message { get; }
 
         public override string ToString()
