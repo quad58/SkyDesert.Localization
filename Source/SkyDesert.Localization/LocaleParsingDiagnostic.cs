@@ -2,20 +2,18 @@
 {
     public class LocaleParsingDiagnostic
     {
-        public LocaleParsingDiagnostic(LocaleParsingErrorCode errorCode, string message, LocaleParsingLocation location)
+        public LocaleParsingDiagnostic(LocaleParsingDiagnosticDescriptor descriptor, LocaleParsingLocation location)
         {
-            ErrorCode = errorCode;
-            Message = message;
+            Descriptor = descriptor;
             Location = location;
         }
 
-        public LocaleParsingErrorCode ErrorCode { get; }
+        public LocaleParsingDiagnosticDescriptor Descriptor { get; }
         public LocaleParsingLocation Location { get; }
-        public string Message { get; }
 
         public override string ToString()
         {
-            return $"{Location}: {Message}";
+            return $"{Location}: {Descriptor}";
         }
     }
 }
