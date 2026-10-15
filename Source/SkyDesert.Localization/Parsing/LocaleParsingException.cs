@@ -4,14 +4,14 @@ namespace SkyDesert.Localization.Parsing
 {
     public class LocaleParsingException : LocalizationException
     {
-        public LocaleParsingException(LocaleParsingDiagnosticDescriptor descriptor, int character) : base("Locale parsing error.")
+        public LocaleParsingException(LocaleParsingDiagnosticDescriptor descriptor, LocaleParsingLocation location) : base("Locale parsing error.")
         {
             Descriptor = descriptor;
-            Character = character;
+            Location = location;
         }
 
         public LocaleParsingDiagnosticDescriptor Descriptor { get; }
-        public int Character { get; }
+        public LocaleParsingLocation Location { get; }
 
         public override string Message => Descriptor.Message;
 
@@ -19,7 +19,7 @@ namespace SkyDesert.Localization.Parsing
         {
             get
             {
-                yield return new Detail(nameof(Character), Character.ToString());
+                yield return new Detail(nameof(Location), Location.ToString());
             }
         }
     }

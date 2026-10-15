@@ -44,7 +44,7 @@ namespace SkyDesert.Localization.Parsing
 
         private LocaleParsingDiagnostic CreateStringDiagnostic(LocaleParsingException exception, int line)
         {
-            return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingStringLocation(line, exception.Character));
+            return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingStringLocation(line, ((LocaleParsingCharacterLocation) exception.Location).Character));
         }
 
         private void ParseLines(string input, LineResolver resolveLine, ExceptionResolver resolveException)
@@ -92,13 +92,13 @@ namespace SkyDesert.Localization.Parsing
             int equalsIndex = input.IndexOf('=', true);
             if (equalsIndex == -1)
             {
-                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), input.Length - 1);
+                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.Length - 1));
             }
 
             key = input.Substring(0, equalsIndex);
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), 0);
+                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(0));
             }
 
             translation = input.Substring(equalsIndex + 1);
