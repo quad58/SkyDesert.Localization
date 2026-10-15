@@ -1,4 +1,6 @@
-﻿using System;
+﻿// TODO: Rewrite on StringBuilder
+
+using System;
 using System.Collections.Generic;
 
 namespace SkyDesert.Localization
@@ -42,6 +44,12 @@ namespace SkyDesert.Localization
                     output += enumerator.Current.ToString();
                 }
                 output += ")";
+            }
+
+            if (InnerException != null)
+            {
+                output += " ---> " + InnerException.ToString();
+                output += Environment.NewLine + "   --- End of inner exception stack trace ---";
             }
 
             output += Environment.NewLine + StackTrace;
