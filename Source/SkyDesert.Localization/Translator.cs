@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SkyDesert.Localization
 {
-    public sealed class Translator : ITranslator
+    public sealed class Translator : ITranslator<TranslationOptions>
     {
         public Translator(Locale locale)
         {
@@ -28,38 +28,6 @@ namespace SkyDesert.Localization
         public bool TryTranslate(string key, out string translation)
         {
             return TryTranslate(key, out translation, new TranslationOptions());
-        }
-
-        public string Translate(string key, TranslationOptions options)
-        {
-            if (!TryTranslate(key, out string translation, options))
-            {
-                throw new TranslationNotFoundException(key);
-            }
-
-            return translation;
-        }
-
-        public string Translate(string key)
-        {
-            return Translate(key, new TranslationOptions());
-        }
-
-        public string Translate(string key, string fallback, TranslationOptions options)
-        {
-            if (fallback == null) throw new ArgumentNullException(nameof(fallback));
-
-            if (TryTranslate(key, out string translation, options))
-            {
-                return translation;
-            }
-
-            return fallback;
-        }
-
-        public string Translate(string key, string fallback)
-        {
-            return Translate(key, fallback, new TranslationOptions());
         }
 
         private string Unescape(string input)
@@ -167,7 +135,7 @@ namespace SkyDesert.Localization
             return argumentPairs;
         }
 
-        public string TranslatePlaceholders(string input, TranslationOptions options)
+        private string TranslatePlaceholdersCore(string input, TranslationOptions options)
         {
             if (input.IndexOf('{', true) == -1)
             {
@@ -184,6 +152,11 @@ namespace SkyDesert.Localization
             }, true);
         }
 
+        public string TranslatePlaceholders(string input, TranslationOptions options)
+        {
+            return Unescape(TranslatePlaceholdersCore(input, options));
+        }
+
         public string TranslatePlaceholders(string input)
         {
             return TranslatePlaceholders(input, new TranslationOptions());
@@ -194,7 +167,7 @@ namespace SkyDesert.Localization
             if (currentDepth <= 0)
                 return input;
 
-            return TranslatePlaceholders(input, new TranslationOptions(options.ParseArguments, options.MaxRecursionDepth - 1));
+            return TranslatePlaceholdersCore(input, new TranslationOptions(options.ParseArguments, options.MaxRecursionDepth - 1));
         }
     }
 }
