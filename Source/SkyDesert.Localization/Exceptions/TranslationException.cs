@@ -1,4 +1,6 @@
-﻿namespace SkyDesert.Localization
+﻿using System.Collections.Generic;
+
+namespace SkyDesert.Localization
 {
     public class TranslationException : LocalizationException
     {
@@ -34,6 +36,14 @@
                         return "Arguments are invalid.";
                 }
                 return "Unknown error.";
+            }
+        }
+
+        protected override IEnumerable<Detail> Details
+        {
+            get
+            {
+                yield return new Detail(nameof(Key), Key.ToString());
             }
         }
     }

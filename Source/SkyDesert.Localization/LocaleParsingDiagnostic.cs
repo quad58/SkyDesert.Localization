@@ -24,5 +24,10 @@
         public LocaleParsingErrorCode ErrorCode { get; }
         public LocaleParsingLocation Location;
         public string Message { get; }
+
+        public override string ToString()
+        {
+            return $"{Location}: {Message}";
+        }
     }
 }

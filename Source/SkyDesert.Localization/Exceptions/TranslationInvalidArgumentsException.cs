@@ -1,4 +1,6 @@
-﻿namespace SkyDesert.Localization
+﻿using System.Collections.Generic;
+
+namespace SkyDesert.Localization
 {
     public class TranslationInvalidArgumentsException : LocalizationException
     {
@@ -23,6 +25,14 @@
                         return "Argument has duplicate.";
                 }
                 return "Unknown error.";
+            }
+        }
+
+        protected override IEnumerable<Detail> Details
+        {
+            get
+            {
+                yield return new Detail(nameof(Argument), Argument.ToString());
             }
         }
     }

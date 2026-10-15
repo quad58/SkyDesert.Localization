@@ -1,4 +1,6 @@
-﻿namespace SkyDesert.Localization
+﻿using System.Collections.Generic;
+
+namespace SkyDesert.Localization
 {
     public class LocaleParsingException : LocalizationException
     {
@@ -23,6 +25,14 @@
                         return "Value does not have a key (nothing before equals symbol).";
                 }
                 return "Unknown error.";
+            }
+        }
+
+        protected override IEnumerable<Detail> Details
+        {
+            get
+            {
+                yield return new Detail(nameof(Character), Character.ToString());
             }
         }
     }

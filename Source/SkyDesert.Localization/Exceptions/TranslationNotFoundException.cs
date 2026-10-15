@@ -1,4 +1,6 @@
-﻿namespace SkyDesert.Localization
+﻿using System.Collections.Generic;
+
+namespace SkyDesert.Localization
 {
     public class TranslationNotFoundException : LocalizationException
     {
@@ -9,6 +11,14 @@
 
         public string Key { get; }
 
-        public override string Message => $"Translation with key \"{Key}\" not found.";
+        public override string Message => "Translation not found.";
+
+        protected override IEnumerable<Detail> Details
+        {
+            get
+            {
+                yield return new Detail(nameof(Key), Key.ToString());
+            }
+        }
     }
 }
