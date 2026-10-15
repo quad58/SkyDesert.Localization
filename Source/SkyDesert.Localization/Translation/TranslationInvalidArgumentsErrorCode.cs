@@ -1,4 +1,4 @@
-﻿namespace SkyDesert.Localization
+﻿namespace SkyDesert.Localization.Translation
 {
     public enum TranslationInvalidArgumentsErrorCode
     {

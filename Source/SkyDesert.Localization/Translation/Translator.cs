@@ -1,9 +1,9 @@
-using SkyDesert.Extensions;
+using SkyDesert.Localization.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Translation
 {
     public sealed class Translator : ITranslator<TranslationOptions>
     {

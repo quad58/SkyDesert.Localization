@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Core
 {
     public sealed class LocaleRegistry : ILocaleProvider, ILocaleChangeNotifier
     {

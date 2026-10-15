@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Translation
 {
     public static class TranslatorExtensions
     {

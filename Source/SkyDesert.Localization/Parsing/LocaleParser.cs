@@ -1,8 +1,9 @@
-using SkyDesert.Extensions;
+using SkyDesert.Localization.Core;
+using SkyDesert.Localization.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Parsing
 {
     public class LocaleParser
     {

@@ -1,4 +1,4 @@
-﻿namespace SkyDesert.Localization
+﻿namespace SkyDesert.Localization.Parsing
 {
     public class LocaleParsingDiagnostic
     {

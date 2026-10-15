@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkyDesert.Localization.Core;
+using System;
 
 namespace SkyDesert.Localization
 {

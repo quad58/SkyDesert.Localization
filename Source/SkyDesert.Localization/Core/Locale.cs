@@ -1,7 +1,7 @@
 using SkyDesert.Extensions;
 using System.Collections.Generic;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Core
 {
     public class Locale : ITranslationSource
     {

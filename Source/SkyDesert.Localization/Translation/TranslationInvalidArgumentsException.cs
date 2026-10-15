@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkyDesert.Localization
+namespace SkyDesert.Localization.Translation
 {
     public class TranslationInvalidArgumentsException : LocalizationException
     {
