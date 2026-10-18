@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SkyDesert.Localization.Parsing
 {
-    public class LocaleParsingResult
+    public sealed class LocaleParsingResult
     {
         public LocaleParsingResult(bool success, Locale locale, IReadOnlyList<LocaleParsingDiagnostic> diagnostics)
         {
