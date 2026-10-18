@@ -51,6 +51,16 @@ namespace SkyDesert.Localization.Core
             }
         }
 
+        public bool ContainsLocale(string code)
+        {
+            return _Locales.ContainsKey(code);
+        }
+
+        public bool ContainsLocale(Locale locale)
+        {
+            return _Locales.ContainsKey(locale.LanguageCode);
+        }
+
         public bool RemoveLocale(string code)
         {
             return _Locales.Remove(code);
