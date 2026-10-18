@@ -124,7 +124,7 @@ namespace SkyDesert.Localization.Translation
                 }
 
                 string argumentName = argument.Substring(0, equalsIndex).Trim();
-                string argumentValue = argument.Substring(equalsIndex + 1, argument.Length - equalsIndex - 1).Trim();
+                string argumentValue = argument.Substring(equalsIndex + 1, argument.Length - equalsIndex - 1);
 
                 if (!argumentPairs.TryAdd(argumentName, argumentValue))
                 {
