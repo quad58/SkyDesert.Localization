@@ -63,7 +63,7 @@ namespace SkyDesert.Localization
             return stringBuilder.ToString();
         }
 
-        protected struct Detail
+        protected readonly struct Detail
         {
             public Detail(string name, string value)
             {
