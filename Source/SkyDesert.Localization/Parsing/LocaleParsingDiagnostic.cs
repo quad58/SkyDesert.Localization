@@ -1,6 +1,6 @@
 ﻿namespace SkyDesert.Localization.Parsing
 {
-    public class LocaleParsingDiagnostic
+    public sealed class LocaleParsingDiagnostic
     {
         public LocaleParsingDiagnostic(LocaleParsingDiagnosticDescriptor descriptor, LocaleParsingLocation location)
         {
