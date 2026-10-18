@@ -36,7 +36,7 @@ namespace SkyDesert.Localization.Core
         public event Action<Locale> OnLocaleChange;
 
         private Dictionary<string, Locale> _Locales;
-        public IReadOnlyDictionary<string, Locale> Locales => _Locales;
+        public IEnumerable<Locale> Locales => _Locales.Values;
 
         public void AddLocale(Locale locale)
         {
