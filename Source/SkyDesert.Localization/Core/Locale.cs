@@ -1,5 +1,6 @@
 using SkyDesert.Extensions;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SkyDesert.Localization.Core
 {
@@ -9,18 +10,21 @@ namespace SkyDesert.Localization.Core
         {
             LanguageCode = code;
             _Translations = new Dictionary<string, string>();
+            _ReadOnlyTranslations = new ReadOnlyDictionary<string, string>(_Translations);
         }
 
         public Locale(string code, IEnumerable<KeyValuePair<string, string>> translations)
         {
             LanguageCode = code;
             _Translations = new Dictionary<string, string>(translations);
+            _ReadOnlyTranslations = new ReadOnlyDictionary<string, string>(_Translations);
         }
 
         public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
 
         protected Dictionary<string, string> _Translations;
-        public IReadOnlyDictionary<string, string> Translations => _Translations;
+        private ReadOnlyDictionary<string, string> _ReadOnlyTranslations;
+        public IReadOnlyDictionary<string, string> Translations => _ReadOnlyTranslations;
 
         public bool TryAddTranslation(string key, string translation)
         {
