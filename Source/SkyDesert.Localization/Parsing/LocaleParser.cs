@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SkyDesert.Localization.Parsing
 {
-    public class LocaleParser
+    public class LocaleParser : ILocaleParser
     {
         private delegate void LineResolver(string key, string transltion);
         private delegate void ExceptionResolver(LocaleParsingException exception, int line);
