@@ -1,6 +1,6 @@
 ﻿namespace SkyDesert.Localization.Parsing
 {
-    public class LocaleParsingCharacterLocation : LocaleParsingLocation
+    public sealed class LocaleParsingCharacterLocation : LocaleParsingLocation
     {
         public LocaleParsingCharacterLocation(int character)
         {
