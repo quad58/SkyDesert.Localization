@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace SkyDesert.Localization.Core
 {
-    public class Locale : ITranslationSource
+    public sealed class Locale : ITranslationSource
     {
         public Locale(string code)
         {
@@ -22,7 +22,7 @@ namespace SkyDesert.Localization.Core
 
         public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
 
-        protected Dictionary<string, string> _Translations;
+        private Dictionary<string, string> _Translations;
         private ReadOnlyDictionary<string, string> _ReadOnlyTranslations;
         public IReadOnlyDictionary<string, string> Translations => _ReadOnlyTranslations;
 
