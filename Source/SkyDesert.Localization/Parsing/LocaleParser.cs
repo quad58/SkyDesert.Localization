@@ -95,7 +95,7 @@ namespace SkyDesert.Localization.Parsing
                 throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.Length - 1));
             }
 
-            key = input.Substring(0, equalsIndex);
+            key = input.Substring(0, equalsIndex).Trim();
             if (string.IsNullOrWhiteSpace(key))
             {
                 throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(0));
