@@ -62,7 +62,7 @@ namespace SkyDesert.Localization.Translation
                 {
                     return false;
                 }
-                translation = TranslateRecursive(translation, options, options.MaxRecursionDepth);
+                translation = TranslateRecursive(translation, options);
                 return true;
             }
 
@@ -99,7 +99,7 @@ namespace SkyDesert.Localization.Translation
                 return '{' + placeholderName + '}';
             }, true);
 
-            translation = TranslateRecursive(translation, options, options.MaxRecursionDepth);
+            translation = TranslateRecursive(translation, options);
             return true;
         }
 
@@ -155,9 +155,9 @@ namespace SkyDesert.Localization.Translation
             return TranslatePlaceholders(input, new TranslationOptions());
         }
 
-        private string TranslateRecursive(string input, TranslationOptions options, int currentDepth)
+        private string TranslateRecursive(string input, TranslationOptions options)
         {
-            if (currentDepth <= 0)
+            if (options.MaxRecursionDepth <= 0)
                 return input;
 
             return TranslatePlaceholdersCore(input, new TranslationOptions(options.ParseArguments, options.MaxRecursionDepth - 1));
