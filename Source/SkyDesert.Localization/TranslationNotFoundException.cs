@@ -2,7 +2,7 @@
 
 namespace SkyDesert.Localization
 {
-    public class TranslationNotFoundException : LocalizationException
+    public sealed class TranslationNotFoundException : LocalizationException
     {
         public TranslationNotFoundException(string key) : base("Translation not found.")
         {
