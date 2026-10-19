@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SkyDesert.Localization
 {
@@ -11,14 +12,6 @@ namespace SkyDesert.Localization
 
         public string Key { get; }
 
-        public override string Message => "Translation not found.";
-
-        protected override IEnumerable<Detail> Details
-        {
-            get
-            {
-                yield return new Detail(nameof(Key), Key.ToString());
-            }
-        }
+        protected override IEnumerable<Detail> Details => base.Details.Append(new Detail(nameof(Key), Key));
     }
 }

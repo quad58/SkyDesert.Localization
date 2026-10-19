@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SkyDesert.Localization.Parsing
 {
-    public class LocaleParsingException : LocalizationException
+    public sealed class LocaleParsingException : LocalizationException
     {
-        public LocaleParsingException(LocaleParsingDiagnosticDescriptor descriptor, LocaleParsingLocation location) : base("Locale parsing error.")
+        public LocaleParsingException(LocaleParsingDiagnosticDescriptor descriptor, LocaleParsingLocation location) : base(descriptor.Message)
         {
             Descriptor = descriptor;
             Location = location;
@@ -13,14 +14,6 @@ namespace SkyDesert.Localization.Parsing
         public LocaleParsingDiagnosticDescriptor Descriptor { get; }
         public LocaleParsingLocation Location { get; }
 
-        public override string Message => Descriptor.Message;
-
-        protected override IEnumerable<Detail> Details
-        {
-            get
-            {
-                yield return new Detail(nameof(Location), Location.ToString());
-            }
-        }
+        protected override IEnumerable<Detail> Details => base.Details.Append(new Detail(nameof(Location), Location.ToString()));
     }
 }

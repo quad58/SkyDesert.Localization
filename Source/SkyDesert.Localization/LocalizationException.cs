@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SkyDesert.Localization
 {
-    public class LocalizationException : Exception
+    public abstract class LocalizationException : Exception
     {
-        public LocalizationException() : base("Localization error.")
+        public LocalizationException() : base()
         {
 
         }
@@ -21,7 +22,7 @@ namespace SkyDesert.Localization
 
         }
 
-        protected virtual IEnumerable<Detail> Details { get; }
+        protected virtual IEnumerable<Detail> Details => Enumerable.Empty<Detail>();
 
         public override string ToString()
         {
