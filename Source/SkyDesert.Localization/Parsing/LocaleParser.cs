@@ -23,7 +23,7 @@ namespace SkyDesert.Localization.Parsing
                 locale.AddOrUpdateTranslation(key, translation);
             }, (exception, line) =>
             {
-                diagnostics.Add(CreateStringDiagnostic(exception, line));
+                diagnostics.Add(CreateDiagnostic(exception, line));
                 success = false;
             });
 
@@ -36,15 +36,19 @@ namespace SkyDesert.Localization.Parsing
 
             ParseLines(input, (_, _) => { }, (exception, line) =>
             {
-                diagnostics.Add(CreateStringDiagnostic(exception, line));
+                diagnostics.Add(CreateDiagnostic(exception, line));
             });
 
             return diagnostics;
         }
 
-        private LocaleParsingDiagnostic CreateStringDiagnostic(LocaleParsingException exception, int line)
+        private LocaleParsingDiagnostic CreateDiagnostic(LocaleParsingException exception, int line)
         {
-            return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingTextLocation(line, ((LocaleParsingCharacterLocation) exception.Location).Character));
+            if (exception.Location is LocaleParsingCharacterLocation characterLocation)
+            {
+                return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingTextLocation(line, characterLocation.Character));
+            }
+            return new LocaleParsingDiagnostic(exception.Descriptor, exception.Location);
         }
 
         private void ParseLines(string input, LineResolver resolveLine, ExceptionResolver resolveException)
