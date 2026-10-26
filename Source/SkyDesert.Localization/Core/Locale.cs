@@ -1,4 +1,5 @@
 using SkyDesert.Localization.Extensions;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -9,22 +10,19 @@ namespace SkyDesert.Localization.Core
         public Locale(string code)
         {
             LanguageCode = code;
-            _Translations = new Dictionary<string, string>();
-            _ReadOnlyTranslations = new ReadOnlyDictionary<string, string>(_Translations);
+            _Translations = new ConcurrentDictionary<string, string>();
         }
 
         public Locale(string code, IEnumerable<KeyValuePair<string, string>> translations)
         {
             LanguageCode = code;
-            _Translations = new Dictionary<string, string>(translations);
-            _ReadOnlyTranslations = new ReadOnlyDictionary<string, string>(_Translations);
+            _Translations = new ConcurrentDictionary<string, string>(translations);
         }
 
         public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
 
-        private Dictionary<string, string> _Translations;
-        private ReadOnlyDictionary<string, string> _ReadOnlyTranslations;
-        public IReadOnlyDictionary<string, string> Translations => _ReadOnlyTranslations;
+        private ConcurrentDictionary<string, string> _Translations;
+        public IReadOnlyDictionary<string, string> Translations => new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(_Translations));
 
         public bool TryAddTranslation(string key, string translation)
         {
@@ -46,12 +44,12 @@ namespace SkyDesert.Localization.Core
 
         public bool RemoveTranslation(string key)
         {
-            return _Translations.Remove(key);
+            return _Translations.TryRemove(key, out _);
         }
 
         public bool TryGetTranslation(string key, out string translation)
         {
-            if (Translations.TryGetValue(key, out translation))
+            if (_Translations.TryGetValue(key, out translation))
             {
                 return true;
             }
