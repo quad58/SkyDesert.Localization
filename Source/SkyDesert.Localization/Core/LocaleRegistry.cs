@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,41 +7,36 @@ namespace SkyDesert.Localization.Core
 {
     public sealed class LocaleRegistry : ILocaleProvider, ILocaleChangeNotifier
     {
-        public LocaleRegistry()
+        public LocaleRegistry(IEnumerable<Locale> locales, string defaultLanguageCode)
         {
-            _Locales = new Dictionary<string, Locale>();
+            _Locales = new ConcurrentDictionary<string, Locale>(locales.ToDictionary((locale) => locale.LanguageCode));
+            SetLocale(defaultLanguageCode);
         }
 
-        public LocaleRegistry(IEnumerable<Locale> locales)
-        {
-            _Locales = locales.ToDictionary((locale) => locale.LanguageCode);
-        }
-
-        public Locale Current { get; private set; }
-
-        public string CurrentLanguage
-        {
-            get => Current.LanguageCode;
-            set
-            {
-                if (Current != null && Current.LanguageCode == value) return;
-                if (!_Locales.TryGetValue(value, out Locale locale))
-                {
-                    throw new KeyNotFoundException($"Locale with code {value} not found.");
-                }
-                Current = locale;
-                OnLocaleChange?.Invoke(Current);
-            }
-        }
+        public Locale CurrentLocale { get; private set; }
 
         public event Action<Locale> OnLocaleChange;
 
-        private Dictionary<string, Locale> _Locales;
-        public IEnumerable<Locale> Locales => _Locales.Values;
+        private ConcurrentDictionary<string, Locale> _Locales;
+        public IEnumerable<Locale> Locales => _Locales.Values.ToList();
+
+        public void SetLocale(string languageCode)
+        {
+            if (CurrentLocale != null && CurrentLocale.LanguageCode == languageCode) return;
+            CurrentLocale = GetLocale(languageCode);
+            OnLocaleChange?.Invoke(CurrentLocale);
+        }
+
+        public bool TryAddLocale(Locale locale)
+        {
+            if (locale == null) throw new ArgumentNullException(nameof(locale));
+
+            return _Locales.TryAdd(locale.LanguageCode, locale);
+        }
 
         public void AddLocale(Locale locale)
         {
-            _Locales.Add(locale.LanguageCode, locale);
+            if (!TryAddLocale(locale)) throw new LocaleAlreadyExistsException(locale.LanguageCode);
         }
 
         public void AddLocales(IEnumerable<Locale> locales)
@@ -51,24 +47,56 @@ namespace SkyDesert.Localization.Core
             }
         }
 
-        public bool ContainsLocale(string code)
+        public bool ContainsLocale(string languageCode)
         {
-            return _Locales.ContainsKey(code);
+            return _Locales.ContainsKey(languageCode);
         }
 
         public bool ContainsLocale(Locale locale)
         {
-            return _Locales.ContainsKey(locale.LanguageCode);
+            if (locale == null) throw new ArgumentNullException(nameof(locale));
+
+            return ContainsLocale(locale.LanguageCode);
         }
 
-        public bool RemoveLocale(string code)
+        public bool TryGetLocale(string languageCode, out Locale locale)
         {
-            return _Locales.Remove(code);
+            return _Locales.TryGetValue(languageCode, out locale);
         }
 
-        public bool RemoveLocale(Locale locale)
+        public Locale GetLocale(string languageCode)
         {
-            return _Locales.Remove(locale.LanguageCode);
+            if (!TryGetLocale(languageCode, out Locale locale)) throw new LocaleNotFoundException(languageCode);
+
+            return locale;
+        }
+
+        public bool TryRemoveLocale(string languageCode)
+        {
+            if (CurrentLocale.LanguageCode == languageCode) return false;
+
+            return _Locales.TryRemove(languageCode, out _);
+        }
+
+        public bool TryRemoveLocale(Locale locale)
+        {
+            if (locale == null) throw new ArgumentNullException(nameof(locale));
+
+            return TryRemoveLocale(locale.LanguageCode);
+        }
+
+        public void RemoveLocale(string languageCode)
+        {
+            if (CurrentLocale.LanguageCode == languageCode) throw new CannotRemoveCurrentLocaleException(languageCode);
+
+            if (!TryRemoveLocale(languageCode)) throw new LocaleNotFoundException(languageCode);
+        }
+
+        public void RemoveLocale(Locale locale)
+        {
+            if (locale == null) throw new ArgumentNullException(nameof(locale));
+
+            RemoveLocale(locale.LanguageCode);
         }
     }
 }

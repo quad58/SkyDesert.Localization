@@ -2,6 +2,6 @@
 {
     public interface ILocaleProvider
     {
-        public Locale Current { get; }
+        public Locale CurrentLocale { get; }
     }
 }
