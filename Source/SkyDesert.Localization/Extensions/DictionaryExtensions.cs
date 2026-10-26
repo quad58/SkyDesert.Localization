@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace SkyDesert.Extensions
+namespace SkyDesert.Localization.Extensions
 {
     public static class DictionaryExtensions
     {
-        public static bool AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        public static bool AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
             if (dictionary.ContainsKey(key))
             {
@@ -18,7 +18,7 @@ namespace SkyDesert.Extensions
             }
         }
 
-        public static TValue GetValueOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
             if (dictionary.TryGetValue(key, out TValue value))
             {

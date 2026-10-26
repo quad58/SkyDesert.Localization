@@ -1,4 +1,4 @@
-using SkyDesert.Extensions;
+using SkyDesert.Localization.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
