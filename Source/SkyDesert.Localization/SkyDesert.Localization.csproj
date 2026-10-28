@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+	  <PackageId>SkyDesert.Localization</PackageId>
+	  <Version>0.1.0-beta</Version>
+	  <Authors>Quadq</Authors>
+	  <Description>A lightweight, flexible and extensible localization library for .NET used in "Sky Desert" video game.</Description>
+	  <RepositoryUrl>https://github.com/quad58/SkyDesert.Localization</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
