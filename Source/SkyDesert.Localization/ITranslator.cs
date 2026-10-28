@@ -2,6 +2,6 @@
 {
     public interface ITranslator
     {
-        public bool TryTranslate(string key, out string translation);
+        bool TryTranslate(string key, out string translation);
     }
 }

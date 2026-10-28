@@ -34,7 +34,7 @@ namespace SkyDesert.Localization.Parsing
         {
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
 
-            ParseLines(input, (_, _) => { }, (exception, line) =>
+            ParseLines(input, (key, transltion) => { }, (exception, line) =>
             {
                 diagnostics.Add(CreateDiagnostic(exception, line));
             });

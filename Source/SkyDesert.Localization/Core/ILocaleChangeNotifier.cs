@@ -4,6 +4,6 @@ namespace SkyDesert.Localization.Core
 {
     public interface ILocaleChangeNotifier
     {
-        public event Action<Locale> OnLocaleChange;
+        event Action<Locale> OnLocaleChange;
     }
 }
