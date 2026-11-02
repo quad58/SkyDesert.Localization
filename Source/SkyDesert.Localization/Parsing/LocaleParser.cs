@@ -68,7 +68,7 @@ namespace SkyDesert.Localization.Parsing
                 }
                 catch (LocaleParsingException exception)
                 {
-                    resolveException(exception, i + 1);
+                    resolveException(exception, i);
                 }
             }
         }
