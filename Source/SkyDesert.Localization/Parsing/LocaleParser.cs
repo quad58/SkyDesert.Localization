@@ -96,13 +96,13 @@ namespace SkyDesert.Localization.Parsing
             int equalsIndex = input.IndexOf('=', true);
             if (equalsIndex == -1)
             {
-                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.Length - 1));
+                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.Length));
             }
 
             key = input.Substring(0, equalsIndex).Trim();
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(0));
+                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(equalsIndex));
             }
 
             translation = input.Substring(equalsIndex + 1);
