@@ -6,19 +6,19 @@ namespace SkyDesert.Localization.Core
 {
     public sealed class Locale : ITranslationSource
     {
-        public Locale(string code)
+        public Locale(string identifier)
         {
-            LanguageCode = code;
+            Identifier = identifier;
             _Translations = new ConcurrentDictionary<string, string>();
         }
 
-        public Locale(string code, IEnumerable<KeyValuePair<string, string>> translations)
+        public Locale(string identifier, IEnumerable<KeyValuePair<string, string>> translations)
         {
-            LanguageCode = code;
+            Identifier = identifier;
             _Translations = new ConcurrentDictionary<string, string>(translations);
         }
 
-        public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
+        public string Identifier { get; }
 
         private ConcurrentDictionary<string, string> _Translations;
 
@@ -57,7 +57,7 @@ namespace SkyDesert.Localization.Core
 
         public override string ToString()
         {
-            return LanguageCode;
+            return Identifier;
         }
     }
 }

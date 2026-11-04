@@ -5,13 +5,13 @@ namespace SkyDesert.Localization.Core
 {
     public class LocaleRegistryException : LocalizationException
     {
-        public LocaleRegistryException(string message, string languageCode) : base(message)
+        public LocaleRegistryException(string message, string localeIdentifier) : base(message)
         {
-            LanguageCode = languageCode;
+            LocaleIdentifier = localeIdentifier;
         }
 
-        public string LanguageCode { get; }
+        public string LocaleIdentifier { get; }
 
-        protected override IEnumerable<Detail> Details => base.Details.Append(new Detail(nameof(LanguageCode), LanguageCode));
+        protected override IEnumerable<Detail> Details => base.Details.Append(new Detail(nameof(LocaleIdentifier), LocaleIdentifier));
     }
 }

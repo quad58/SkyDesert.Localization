@@ -2,7 +2,7 @@
 {
     public sealed class LocaleNotFoundException : LocaleRegistryException
     {
-        public LocaleNotFoundException(string languageCode) : base("Locale not found.", languageCode)
+        public LocaleNotFoundException(string localeIdentifier) : base("Locale not found.", localeIdentifier)
         {
 
         }

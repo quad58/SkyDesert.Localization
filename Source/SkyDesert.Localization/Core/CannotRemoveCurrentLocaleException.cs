@@ -2,7 +2,7 @@
 {
     public sealed class CannotRemoveCurrentLocaleException : LocaleRegistryException
     {
-        public CannotRemoveCurrentLocaleException(string languageCode) : base("Cannot remove current locale.", languageCode)
+        public CannotRemoveCurrentLocaleException(string localeIdentifier) : base("Cannot remove current locale.", localeIdentifier)
         {
 
         }
