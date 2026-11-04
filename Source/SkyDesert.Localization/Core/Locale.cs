@@ -52,11 +52,7 @@ namespace SkyDesert.Localization.Core
 
         public bool TryGetTranslation(string key, out string translation)
         {
-            if (_Translations.TryGetValue(key, out translation))
-            {
-                return true;
-            }
-            return false;
+            return _Translations.TryGetValue(key, out translation);
         }
 
         public override string ToString()
