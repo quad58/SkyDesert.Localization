@@ -1,4 +1,3 @@
-using SkyDesert.Localization.Extensions;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,38 +6,42 @@ namespace SkyDesert.Localization.Core
 {
     public sealed class Locale : ITranslationSource
     {
-        public Locale(string code)
+        public Locale(string identifier)
         {
-            LanguageCode = code;
+            Identifier = identifier;
             _Translations = new ConcurrentDictionary<string, string>();
         }
 
-        public Locale(string code, IEnumerable<KeyValuePair<string, string>> translations)
+        public Locale(string identifier, IEnumerable<KeyValuePair<string, string>> translations)
         {
-            LanguageCode = code;
+            Identifier = identifier;
             _Translations = new ConcurrentDictionary<string, string>(translations);
         }
 
-        public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
+        public string Identifier { get; }
 
         private ConcurrentDictionary<string, string> _Translations;
-        public IReadOnlyDictionary<string, string> Translations => new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(_Translations));
+
+        public IReadOnlyDictionary<string, string> GetTranslationsSnapshot()
+        {
+            return new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(_Translations));
+        }
 
         public bool TryAddTranslation(string key, string translation)
         {
             return _Translations.TryAdd(key, translation);
         }
 
-        public bool AddOrUpdateTranslation(string key, string translation)
+        public void AddOrUpdateTranslation(string key, string translation)
         {
-            return _Translations.AddOrUpdate(key, translation);
+            _Translations.AddOrUpdate(key, translation, (_key, oldTranslation) => translation);
         }
 
         public void AddOrUpdateTranslations(IEnumerable<KeyValuePair<string, string>> translations)
         {
             foreach (KeyValuePair<string, string> translation in translations)
             {
-                _Translations.AddOrUpdate(translation.Key, translation.Value);
+                AddOrUpdateTranslation(translation.Key, translation.Value);
             }
         }
 
@@ -49,16 +52,12 @@ namespace SkyDesert.Localization.Core
 
         public bool TryGetTranslation(string key, out string translation)
         {
-            if (_Translations.TryGetValue(key, out translation))
-            {
-                return true;
-            }
-            return false;
+            return _Translations.TryGetValue(key, out translation);
         }
 
         public override string ToString()
         {
-            return LanguageCode;
+            return Identifier;
         }
     }
 }
