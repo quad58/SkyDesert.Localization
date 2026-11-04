@@ -1,4 +1,3 @@
-using SkyDesert.Localization.Extensions;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,16 +32,16 @@ namespace SkyDesert.Localization.Core
             return _Translations.TryAdd(key, translation);
         }
 
-        public bool AddOrUpdateTranslation(string key, string translation)
+        public void AddOrUpdateTranslation(string key, string translation)
         {
-            return _Translations.AddOrUpdate(key, translation);
+            _Translations.AddOrUpdate(key, translation, (_key, oldTranslation) => translation);
         }
 
         public void AddOrUpdateTranslations(IEnumerable<KeyValuePair<string, string>> translations)
         {
             foreach (KeyValuePair<string, string> translation in translations)
             {
-                _Translations.AddOrUpdate(translation.Key, translation.Value);
+                AddOrUpdateTranslation(translation.Key, translation.Value);
             }
         }
 

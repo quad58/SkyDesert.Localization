@@ -119,10 +119,11 @@ namespace SkyDesert.Localization.Translation
                 string argumentName = argument.Substring(0, equalsIndex).Trim();
                 string argumentValue = argument.Substring(equalsIndex + 1, argument.Length - equalsIndex - 1);
 
-                if (!argumentPairs.TryAdd(argumentName, argumentValue))
+                if (argumentPairs.ContainsKey(argumentName))
                 {
                     throw new TranslationArgumentDuplicateException(key, argument);
                 }
+                argumentPairs.Add(argumentName, argumentValue);
             }
 
             return argumentPairs;
