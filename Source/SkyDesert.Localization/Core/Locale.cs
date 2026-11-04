@@ -22,7 +22,11 @@ namespace SkyDesert.Localization.Core
         public string LanguageCode { get; } // Should be an IETF BCP 47 language tag 
 
         private ConcurrentDictionary<string, string> _Translations;
-        public IReadOnlyDictionary<string, string> Translations => new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(_Translations));
+
+        public IReadOnlyDictionary<string, string> GetTranslationsSnapshot()
+        {
+            return new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(_Translations));
+        }
 
         public bool TryAddTranslation(string key, string translation)
         {
