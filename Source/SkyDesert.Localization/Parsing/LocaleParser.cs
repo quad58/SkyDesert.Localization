@@ -10,11 +10,11 @@ namespace SkyDesert.Localization.Parsing
         private delegate void LineResolver(string key, string transltion);
         private delegate void ExceptionResolver(LocaleParsingException exception, int line);
 
-        public LocaleParsingResult Parse(string input, string localeCode)
+        public LocaleParsingResult Parse(string input, string localeIdentifier)
         {
-            if (localeCode == null) throw new ArgumentNullException(nameof(localeCode));
+            if (localeIdentifier == null) throw new ArgumentNullException(nameof(localeIdentifier));
 
-            Locale locale = new Locale(localeCode);
+            Locale locale = new Locale(localeIdentifier);
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
             bool success = true;
 
