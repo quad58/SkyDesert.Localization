@@ -2,6 +2,6 @@
 {
     public interface ILocaleParser
     {
-        LocaleParsingResult Parse(string input, string localeCode);
+        LocaleParsingResult Parse(string input, string localeIdentifier);
     }
 }
