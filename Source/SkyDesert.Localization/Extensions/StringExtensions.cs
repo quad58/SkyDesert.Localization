@@ -83,10 +83,6 @@ namespace SkyDesert.Localization.Extensions
             {
                 if (input[i] == '\\')
                 {
-                    if (i + 1 == input.Length)
-                    {
-                        throw new FormatException("Escape character has no following character.");
-                    }
                     i++;
                     continue;
                 }
