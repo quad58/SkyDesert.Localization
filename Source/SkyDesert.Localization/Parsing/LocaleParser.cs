@@ -93,19 +93,21 @@ namespace SkyDesert.Localization.Parsing
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Value cannot be empty or white space.", nameof(input));
 
-            int equalsIndex = input.IndexOf('=', true);
+            string trimmedInput = input.Trim();
+
+            int equalsIndex = trimmedInput.IndexOf('=', true);
             if (equalsIndex == -1)
             {
-                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.Length));
+                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.TrimEnd().Length));
             }
 
-            key = input.Substring(0, equalsIndex).Trim();
+            key = trimmedInput.Substring(0, equalsIndex);
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(equalsIndex));
+                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(input.IndexOf('=', true)));
             }
 
-            translation = input.Substring(equalsIndex + 1);
+            translation = trimmedInput.Substring(equalsIndex + 1);
         }
 
         protected virtual string RemoveComment(string input)
