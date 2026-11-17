@@ -58,12 +58,11 @@ namespace SkyDesert.Localization.Parsing
             string[] lines = input.Split(new string[] { "\n", "\r", "\r\n" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
-                string line = RemoveComment(lines[i]);
-                if (string.IsNullOrWhiteSpace(line)) continue;
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
 
                 try
                 {
-                    ParseLine(line, out string key, out string translation);
+                    ParseLine(lines[i], out string key, out string translation);
                     resolveLine(key, translation);
                 }
                 catch (LocaleParsingException exception)
@@ -93,7 +92,8 @@ namespace SkyDesert.Localization.Parsing
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Value cannot be empty or white space.", nameof(input));
 
-            string trimmedInput = input.Trim();
+            string inputWithoutComment = RemoveComment(input);
+            string trimmedInput = inputWithoutComment.Trim();
 
             int equalsIndex = trimmedInput.IndexOf('=', true);
             if (equalsIndex == -1)
