@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{ECA03543-B758-41CA-B3B1-A72990769ACE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyDesert.Localization", "Source\SkyDesert.Localization\SkyDesert.Localization.csproj", "{85913D1E-46B4-4066-B6DE-F82971C7442E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkyDesert.Localization", "Source\SkyDesert.Localization\SkyDesert.Localization.csproj", "{85913D1E-46B4-4066-B6DE-F82971C7442E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1AAC4522-C8AB-41BE-99C1-54862EF50E49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyDesert.Localization.Tests", "Tests\SkyDesert.Localization.Tests\SkyDesert.Localization.Tests.csproj", "{FE397EB9-3D36-480E-9234-E84BF7796FF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{85913D1E-46B4-4066-B6DE-F82971C7442E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -32,8 +33,27 @@ Global
 		{85913D1E-46B4-4066-B6DE-F82971C7442E}.Release|x64.Build.0 = Release|Any CPU
 		{85913D1E-46B4-4066-B6DE-F82971C7442E}.Release|x86.ActiveCfg = Release|Any CPU
 		{85913D1E-46B4-4066-B6DE-F82971C7442E}.Release|x86.Build.0 = Release|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Debug|x86.Build.0 = Debug|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Release|x64.Build.0 = Release|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Release|x86.ActiveCfg = Release|Any CPU
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{85913D1E-46B4-4066-B6DE-F82971C7442E} = {ECA03543-B758-41CA-B3B1-A72990769ACE}
+		{FE397EB9-3D36-480E-9234-E84BF7796FF3} = {1AAC4522-C8AB-41BE-99C1-54862EF50E49}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C16183D0-0429-4C0D-B749-1A8D53952C9B}
 	EndGlobalSection
 EndGlobal
