@@ -55,7 +55,7 @@ namespace SkyDesert.Localization.Parsing
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
-            string[] lines = input.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.None);
+            string[] lines = input.Split(new string[] { "\n", "\r", "\r\n" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = RemoveComment(lines[i]);
