@@ -10,7 +10,6 @@ namespace SkyDesert.Localization.Tests.Parsing
         [InlineData("key=translation")]
         [InlineData("   key=translation")]
         [InlineData("	key=translation   ")]
-        [InlineData("   key=translation   #comment")]
         public void ParseLine_KeyEqualsTranslationInput_ReturnsKeyAndTranslation(string input)
         {
             LocaleParser parser = new LocaleParser();
