@@ -5,7 +5,7 @@ namespace SkyDesert.Localization.Parsing
 {
     public sealed class LocaleParsingResult
     {
-        public LocaleParsingResult(bool success, Locale locale, IReadOnlyList<LocaleParsingDiagnostic> diagnostics)
+        public LocaleParsingResult(bool success, ILocale locale, IReadOnlyList<LocaleParsingDiagnostic> diagnostics)
         {
             Success = success;
             Locale = locale;
@@ -13,7 +13,7 @@ namespace SkyDesert.Localization.Parsing
         }
 
         public bool Success { get; }
-        public Locale Locale { get; }
+        public ILocale Locale { get; }
         public IReadOnlyList<LocaleParsingDiagnostic> Diagnostics { get; }
     }
 }
