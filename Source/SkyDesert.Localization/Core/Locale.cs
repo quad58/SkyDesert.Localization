@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace SkyDesert.Localization.Core
 {
-    public sealed class Locale : ITranslationSource
+    public sealed class Locale : ILocale
     {
         public Locale(string identifier)
         {

@@ -7,18 +7,18 @@ namespace SkyDesert.Localization.Core
 {
     public sealed class LocaleRegistry : ILocaleProvider, ILocaleChangeNotifier
     {
-        public LocaleRegistry(IEnumerable<Locale> locales, string defaultLocale)
+        public LocaleRegistry(IEnumerable<ILocale> locales, string defaultLocale)
         {
-            _Locales = new ConcurrentDictionary<string, Locale>(locales.ToDictionary((locale) => locale.Identifier));
+            _Locales = new ConcurrentDictionary<string, ILocale>(locales.ToDictionary((locale) => locale.Identifier));
             SetLocale(defaultLocale);
         }
 
-        public Locale CurrentLocale { get; private set; }
+        public ILocale CurrentLocale { get; private set; }
 
-        public event Action<Locale> OnLocaleChange;
+        public event Action<ILocale> OnLocaleChange;
 
-        private ConcurrentDictionary<string, Locale> _Locales;
-        public IEnumerable<Locale> Locales => _Locales.Values.ToList();
+        private ConcurrentDictionary<string, ILocale> _Locales;
+        public IEnumerable<ILocale> Locales => _Locales.Values.ToList();
 
         public void SetLocale(string localeIdentifier)
         {
@@ -27,21 +27,21 @@ namespace SkyDesert.Localization.Core
             OnLocaleChange?.Invoke(CurrentLocale);
         }
 
-        public bool TryAddLocale(Locale locale)
+        public bool TryAddLocale(ILocale locale)
         {
             if (locale == null) throw new ArgumentNullException(nameof(locale));
 
             return _Locales.TryAdd(locale.Identifier, locale);
         }
 
-        public void AddLocale(Locale locale)
+        public void AddLocale(ILocale locale)
         {
             if (!TryAddLocale(locale)) throw new LocaleAlreadyExistsException(locale.Identifier);
         }
 
-        public void AddLocales(IEnumerable<Locale> locales)
+        public void AddLocales(IEnumerable<ILocale> locales)
         {
-            foreach (Locale locale in locales)
+            foreach (ILocale locale in locales)
             {
                 AddLocale(locale);
             }
@@ -52,21 +52,21 @@ namespace SkyDesert.Localization.Core
             return _Locales.ContainsKey(localeIdentifier);
         }
 
-        public bool ContainsLocale(Locale locale)
+        public bool ContainsLocale(ILocale locale)
         {
             if (locale == null) throw new ArgumentNullException(nameof(locale));
 
             return ContainsLocale(locale.Identifier);
         }
 
-        public bool TryGetLocale(string localeIdentifier, out Locale locale)
+        public bool TryGetLocale(string localeIdentifier, out ILocale locale)
         {
             return _Locales.TryGetValue(localeIdentifier, out locale);
         }
 
-        public Locale GetLocale(string localeIdentifier)
+        public ILocale GetLocale(string localeIdentifier)
         {
-            if (!TryGetLocale(localeIdentifier, out Locale locale)) throw new LocaleNotFoundException(localeIdentifier);
+            if (!TryGetLocale(localeIdentifier, out ILocale locale)) throw new LocaleNotFoundException(localeIdentifier);
 
             return locale;
         }
@@ -78,7 +78,7 @@ namespace SkyDesert.Localization.Core
             return _Locales.TryRemove(localeIdentifier, out _);
         }
 
-        public bool TryRemoveLocale(Locale locale)
+        public bool TryRemoveLocale(ILocale locale)
         {
             if (locale == null) throw new ArgumentNullException(nameof(locale));
 
@@ -92,7 +92,7 @@ namespace SkyDesert.Localization.Core
             if (!TryRemoveLocale(localeIdentifier)) throw new LocaleNotFoundException(localeIdentifier);
         }
 
-        public void RemoveLocale(Locale locale)
+        public void RemoveLocale(ILocale locale)
         {
             if (locale == null) throw new ArgumentNullException(nameof(locale));
 
