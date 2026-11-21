@@ -30,6 +30,21 @@ namespace SkyDesert.Localization.Parsing
             return new LocaleParsingResult(success, locale, diagnostics);
         }
 
+        public IReadOnlyList<LocaleParsingDiagnostic> Parse(string input, ILocaleBuilder localeBuilder)
+        {
+            List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
+
+            ParseLines(input, (key, translation) =>
+            {
+                localeBuilder.AddOrUpdateTranslation(key, translation);
+            }, (exception, line) =>
+            {
+                diagnostics.Add(CreateDiagnostic(exception, line));
+            });
+
+            return diagnostics;
+        }
+
         public IReadOnlyList<LocaleParsingDiagnostic> Validate(string input)
         {
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
