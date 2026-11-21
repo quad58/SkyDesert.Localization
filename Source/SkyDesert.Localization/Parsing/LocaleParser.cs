@@ -14,19 +14,20 @@ namespace SkyDesert.Localization.Parsing
         {
             if (localeIdentifier == null) throw new ArgumentNullException(nameof(localeIdentifier));
 
-            Locale locale = new Locale(localeIdentifier);
+            Dictionary<string, string> translations = new Dictionary<string, string>();
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
             bool success = true;
 
             ParseLines(input, (key, translation) =>
             {
-                locale.AddOrUpdateTranslation(key, translation);
+                translations[key] = translation;
             }, (exception, line) =>
             {
                 diagnostics.Add(CreateDiagnostic(exception, line));
                 success = false;
             });
 
+            Locale locale = new Locale(localeIdentifier, translations);
             return new LocaleParsingResult(success, locale, diagnostics);
         }
 
