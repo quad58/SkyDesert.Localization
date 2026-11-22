@@ -7,12 +7,14 @@ namespace SkyDesert.Localization.Translation
 {
     public sealed class Translator : ITranslator<TranslationOptions>
     {
-        public Translator(ITranslationSource translationSource)
+        public Translator(ITranslationSource translationSource, TranslationOptions defaultOptions = new TranslationOptions())
         {
             TranslationSource = translationSource ?? throw new ArgumentNullException(nameof(translationSource));
+            DefaultOptions = defaultOptions;
         }
 
         private ITranslationSource TranslationSource { get; }
+        public TranslationOptions DefaultOptions { get; }
 
         public bool TryTranslate(string key, out string translation, TranslationOptions options)
         {
@@ -27,7 +29,7 @@ namespace SkyDesert.Localization.Translation
 
         public bool TryTranslate(string key, out string translation)
         {
-            return TryTranslate(key, out translation, new TranslationOptions());
+            return TryTranslate(key, out translation, DefaultOptions);
         }
 
         private string Unescape(string input)
@@ -153,7 +155,7 @@ namespace SkyDesert.Localization.Translation
 
         public string TranslatePlaceholders(string input)
         {
-            return TranslatePlaceholders(input, new TranslationOptions());
+            return TranslatePlaceholders(input, DefaultOptions);
         }
 
         private string TranslateRecursive(string input, TranslationOptions options)
