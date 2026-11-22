@@ -6,7 +6,7 @@ namespace SkyDesert.Localization.Extensions
 {
     public static class StringExtensions
     {
-        public static string ReplacePlaceholders(this string input, PlaceholderResolver resolve, bool ignoreEscapes = false)
+        public static string ReplacePlaceholders(this string input, PlaceholderResolver resolve, bool ignoreEscaped = false)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (resolve == null) throw new ArgumentNullException(nameof(resolve));
@@ -19,7 +19,7 @@ namespace SkyDesert.Localization.Extensions
             {
                 char character = input[i];
 
-                if (ignoreEscapes && character == '\\')
+                if (ignoreEscaped && character == '\\')
                 {
                     i++;
                     continue;
@@ -45,11 +45,11 @@ namespace SkyDesert.Localization.Extensions
             return stringBuilder.ToString();
         }
 
-        public static string[] Split(this string input, char separator, bool ignoreEscapes)
+        public static string[] Split(this string input, char separator, bool ignoreEscaped)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
-            if (ignoreEscapes == false) return input.Split(separator);
+            if (ignoreEscaped == false) return input.Split(separator);
 
             int i = 0;
 
@@ -72,12 +72,12 @@ namespace SkyDesert.Localization.Extensions
             return output.ToArray();
         }
 
-        public static int IndexOf(this string input, char value, int startIndex, bool ignoreEscapes)
+        public static int IndexOf(this string input, char value, int startIndex, bool ignoreEscaped)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (startIndex < 0 || startIndex > input.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            if (ignoreEscapes == false) return input.IndexOf(value, startIndex);
+            if (ignoreEscaped == false) return input.IndexOf(value, startIndex);
 
             for (int i = startIndex; i < input.Length; i++)
             {
@@ -94,9 +94,9 @@ namespace SkyDesert.Localization.Extensions
             return -1;
         }
 
-        public static int IndexOf(this string input, char value, bool ignoreEscapes)
+        public static int IndexOf(this string input, char value, bool ignoreEscaped)
         {
-            return input.IndexOf(value, 0, ignoreEscapes);
+            return input.IndexOf(value, 0, ignoreEscaped);
         }
     }
 }
