@@ -2,13 +2,15 @@ using SkyDesert.Localization.Core;
 using SkyDesert.Localization.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SkyDesert.Localization.Parsing
 {
     public class LocaleParser : ILocaleParser, ILocaleValidator
     {
-        private delegate void LineResolver(string key, string transltion);
-        private delegate void ExceptionResolver(LocaleParsingException exception, int line);
+        private delegate void LineResolver(string input, int line);
+        protected delegate void DiagnosticDescriptorHandler(LocaleParsingDiagnosticDescriptor descriptor, int character);
+        private delegate void DiagnosticHandler(LocaleParsingDiagnostic diagnostic);
 
         public LocaleParsingResult Parse(string input, string localeIdentifier)
         {
@@ -18,13 +20,14 @@ namespace SkyDesert.Localization.Parsing
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
             bool success = true;
 
-            ParseLines(input, (key, translation) =>
+            ResolveLines(input, (lineInput, line) =>
             {
+                ParseLine(lineInput, out string key, out string translation, (descriptor, character) =>
+                {
+                    diagnostics.Add(new LocaleParsingDiagnostic(descriptor, new LocaleParsingTextLocation(line, character)));
+                    success = false;
+                });
                 translations[key] = translation;
-            }, (exception, line) =>
-            {
-                diagnostics.Add(CreateDiagnostic(exception, line));
-                success = false;
             });
 
             Locale locale = new Locale(localeIdentifier, translations);
@@ -35,39 +38,34 @@ namespace SkyDesert.Localization.Parsing
         {
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
 
-            ParseLines(input, (key, translation) =>
+            ResolveLines(input, (lineInput, line) =>
             {
+                ParseLine(lineInput, out string key, out string translation, (descriptor, character) =>
+                {
+                    diagnostics.Add(new LocaleParsingDiagnostic(descriptor, new LocaleParsingTextLocation(line, character)));
+                });
                 localeBuilder.AddOrUpdateTranslation(key, translation);
-            }, (exception, line) =>
-            {
-                diagnostics.Add(CreateDiagnostic(exception, line));
             });
 
-            return diagnostics;
+            return new ReadOnlyCollection<LocaleParsingDiagnostic>(diagnostics);
         }
 
         public IReadOnlyList<LocaleParsingDiagnostic> Validate(string input)
         {
             List<LocaleParsingDiagnostic> diagnostics = new List<LocaleParsingDiagnostic>();
 
-            ParseLines(input, (key, transltion) => { }, (exception, line) =>
+            ResolveLines(input, (lineInput, line) =>
             {
-                diagnostics.Add(CreateDiagnostic(exception, line));
+                ParseLine(lineInput, out string key, out string translation, (descriptor, character) =>
+                {
+                    diagnostics.Add(new LocaleParsingDiagnostic(descriptor, new LocaleParsingTextLocation(line, character)));
+                });
             });
 
-            return diagnostics;
+            return new ReadOnlyCollection<LocaleParsingDiagnostic>(diagnostics);
         }
 
-        private LocaleParsingDiagnostic CreateDiagnostic(LocaleParsingException exception, int line)
-        {
-            if (exception.Location is LocaleParsingCharacterLocation characterLocation)
-            {
-                return new LocaleParsingDiagnostic(exception.Descriptor, new LocaleParsingTextLocation(line, characterLocation.Character));
-            }
-            return new LocaleParsingDiagnostic(exception.Descriptor, exception.Location);
-        }
-
-        private void ParseLines(string input, LineResolver resolveLine, ExceptionResolver resolveException)
+        private void ResolveLines(string input, LineResolver resolveLine)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
@@ -76,54 +74,46 @@ namespace SkyDesert.Localization.Parsing
             {
                 string line = RemoveComment(lines[i]);
                 if (string.IsNullOrWhiteSpace(line)) continue;
-
-                try
-                {
-                    ParseLine(line, out string key, out string translation);
-                    resolveLine(key, translation);
-                }
-                catch (LocaleParsingException exception)
-                {
-                    resolveException(exception, i);
-                }
+                resolveLine(line, i);
             }
+        }
+
+        public void ParseLine(string input, out string key, out string translation)
+        {
+            ParseLine(input, out key, out translation, (descriptor, character) => throw new LocaleParsingException(descriptor, new LocaleParsingCharacterLocation(character)));
         }
 
         public bool TryParseLine(string input, out string key, out string translation)
         {
-            try
-            {
-                ParseLine(input, out key, out translation);
-                return true;
-            }
-            catch (LocaleParsingException)
-            {
-                key = null;
-                translation = null;
-                return false;
-            }
+            bool success = true;
+            ParseLine(input, out key, out translation, (descriptor, character) => success = false);
+            return success;
         }
 
-        public virtual void ParseLine(string input, out string key, out string translation)
+        protected virtual void ParseLine(string input, out string key, out string translation, DiagnosticDescriptorHandler handleDiagnosticDescriptor)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (string.IsNullOrWhiteSpace(input)) throw new ArgumentException("Value cannot be empty or white space.", nameof(input));
 
-            string trimmedInput = input.Trim();
+            key = null;
+            translation = null;
 
-            int equalsIndex = trimmedInput.IndexOf('=', true);
+            int equalsIndex = input.IndexOf('=', true);
             if (equalsIndex == -1)
             {
-                throw new LocaleParsingException(new LocaleParsingKeyWithoutValueDescriptor(), new LocaleParsingCharacterLocation(input.TrimEnd().Length));
+                handleDiagnosticDescriptor(new LocaleParsingKeyWithoutValueDescriptor(), input.TrimEnd().Length);
+                return;
             }
 
-            key = trimmedInput.Substring(0, equalsIndex);
+            key = input.Substring(0, equalsIndex).TrimStart();
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new LocaleParsingException(new LocaleParsingEmptyKeyDescriptor(), new LocaleParsingCharacterLocation(input.IndexOf('=', true)));
+                handleDiagnosticDescriptor(new LocaleParsingEmptyKeyDescriptor(), equalsIndex);
+                return;
             }
 
-            translation = trimmedInput.Substring(equalsIndex + 1);
+            translation = input.Substring(equalsIndex + 1).TrimEnd();
+            return;
         }
 
         protected virtual string RemoveComment(string input)
