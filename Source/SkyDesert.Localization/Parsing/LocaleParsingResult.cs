@@ -1,15 +1,17 @@
 ﻿using SkyDesert.Localization.Core;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace SkyDesert.Localization.Parsing
 {
     public sealed class LocaleParsingResult
     {
-        public LocaleParsingResult(bool success, ILocale locale, IReadOnlyList<LocaleParsingDiagnostic> diagnostics)
+        public LocaleParsingResult(bool success, ILocale locale, IEnumerable<LocaleParsingDiagnostic> diagnostics)
         {
             Success = success;
             Locale = locale;
-            Diagnostics = diagnostics;
+            Diagnostics = new ReadOnlyCollection<LocaleParsingDiagnostic>(diagnostics.ToList());
         }
 
         public bool Success { get; }
