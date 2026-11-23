@@ -7,7 +7,13 @@ namespace SkyDesert.Localization.Translation
 {
     public sealed class Translator : ITranslator<TranslationOptions>
     {
-        public Translator(ITranslationSource translationSource, TranslationOptions defaultOptions = new TranslationOptions())
+        public Translator(ITranslationSource translationSource)
+        {
+            TranslationSource = translationSource ?? throw new ArgumentNullException(nameof(translationSource));
+            DefaultOptions = new TranslationOptions(true, 32);
+        }
+
+        public Translator(ITranslationSource translationSource, TranslationOptions defaultOptions)
         {
             TranslationSource = translationSource ?? throw new ArgumentNullException(nameof(translationSource));
             DefaultOptions = defaultOptions;
