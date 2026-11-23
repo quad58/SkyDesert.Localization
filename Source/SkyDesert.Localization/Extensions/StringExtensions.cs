@@ -74,10 +74,10 @@ namespace SkyDesert.Localization.Extensions
 
         public static int IndexOf(this string input, char value, int startIndex, bool ignoreEscaped)
         {
+            if (ignoreEscaped == false) return input.IndexOf(value, startIndex);
+
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (startIndex < 0 || startIndex > input.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
-
-            if (ignoreEscaped == false) return input.IndexOf(value, startIndex);
 
             for (int i = startIndex; i < input.Length; i++)
             {
