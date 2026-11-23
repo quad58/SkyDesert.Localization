@@ -27,27 +27,5 @@ namespace SkyDesert.Localization.Translation
 
             return fallback;
         }
-
-        public static string Translate<TOptions>(this ITranslator<TOptions> translator, string key, TOptions options)
-        {
-            if (!translator.TryTranslate(key, out string translation, options))
-            {
-                throw new TranslationNotFoundException(key);
-            }
-
-            return translation;
-        }
-
-        public static string Translate<TOptions>(this ITranslator<TOptions> translator, string key, string fallback, TOptions options)
-        {
-            if (fallback == null) throw new ArgumentNullException(nameof(fallback));
-
-            if (translator.TryTranslate(key, out string translation, options))
-            {
-                return translation;
-            }
-
-            return fallback;
-        }
     }
 }

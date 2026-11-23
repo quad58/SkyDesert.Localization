@@ -5,37 +5,32 @@ using System.Text;
 
 namespace SkyDesert.Localization.Translation
 {
-    public sealed class Translator : ITranslator<TranslationOptions>
+    public sealed class Translator : ITranslator
     {
         public Translator(ITranslationSource translationSource)
         {
             TranslationSource = translationSource ?? throw new ArgumentNullException(nameof(translationSource));
-            DefaultOptions = new TranslationOptions(true, 32);
+            TranslationOptions = new TranslationOptions(true, 32);
         }
 
-        public Translator(ITranslationSource translationSource, TranslationOptions defaultOptions)
+        public Translator(ITranslationSource translationSource, TranslationOptions translationOptions)
         {
             TranslationSource = translationSource ?? throw new ArgumentNullException(nameof(translationSource));
-            DefaultOptions = defaultOptions;
+            TranslationOptions = translationOptions;
         }
 
         private ITranslationSource TranslationSource { get; }
-        private TranslationOptions DefaultOptions { get; }
+        private TranslationOptions TranslationOptions { get; }
 
-        public bool TryTranslate(string key, out string translation, TranslationOptions options)
+        public bool TryTranslate(string key, out string translation)
         {
-            if (!TryTranslateCore(key, out translation, options))
+            if (!TryTranslateCore(key, out translation, TranslationOptions.MaxRecursionDepth))
             {
                 return false;
             }
 
             translation = Unescape(translation);
             return true;
-        }
-
-        public bool TryTranslate(string key, out string translation)
-        {
-            return TryTranslate(key, out translation, DefaultOptions);
         }
 
         private string Unescape(string input)
@@ -53,13 +48,13 @@ namespace SkyDesert.Localization.Translation
             return stringBuilder.ToString();
         }
 
-        private bool TryTranslateCore(string key, out string translation, TranslationOptions options)
+        private bool TryTranslateCore(string key, out string translation, int currentRecursionDepth)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Value cannot be empty or white space.", nameof(key));
 
             int openBracketIndex = -1;
-            if (options.ParseArguments)
+            if (TranslationOptions.ParseArguments)
             {
                 openBracketIndex = key.IndexOf('(', true);
             }
@@ -70,7 +65,7 @@ namespace SkyDesert.Localization.Translation
                 {
                     return false;
                 }
-                translation = TranslateRecursive(translation, options);
+                translation = TranslateRecursive(translation, currentRecursionDepth);
                 return true;
             }
 
@@ -107,7 +102,7 @@ namespace SkyDesert.Localization.Translation
                 return '{' + placeholderName + '}';
             }, true);
 
-            translation = TranslateRecursive(translation, options);
+            translation = TranslateRecursive(translation, currentRecursionDepth);
             return true;
         }
 
@@ -137,7 +132,7 @@ namespace SkyDesert.Localization.Translation
             return argumentPairs;
         }
 
-        private string TranslatePlaceholdersCore(string input, TranslationOptions options)
+        private string TranslatePlaceholdersCore(string input, int currentRecursionDepth)
         {
             if (input.IndexOf('{', true) == -1)
             {
@@ -146,7 +141,7 @@ namespace SkyDesert.Localization.Translation
             }
             return input.ReplacePlaceholders(placeholderName =>
             {
-                if (TryTranslateCore(placeholderName, out string translation, options))
+                if (TryTranslateCore(placeholderName, out string translation, currentRecursionDepth))
                 {
                     return translation;
                 }
@@ -154,22 +149,17 @@ namespace SkyDesert.Localization.Translation
             }, true);
         }
 
-        public string TranslatePlaceholders(string input, TranslationOptions options)
-        {
-            return Unescape(TranslatePlaceholdersCore(input, options));
-        }
-
         public string TranslatePlaceholders(string input)
         {
-            return TranslatePlaceholders(input, DefaultOptions);
+            return Unescape(TranslatePlaceholdersCore(input, TranslationOptions.MaxRecursionDepth));
         }
 
-        private string TranslateRecursive(string input, TranslationOptions options)
+        private string TranslateRecursive(string input, int currentRecursionDepth)
         {
-            if (options.MaxRecursionDepth <= 0)
+            if (currentRecursionDepth <= 0)
                 return input;
 
-            return TranslatePlaceholdersCore(input, new TranslationOptions(options.ParseArguments, options.MaxRecursionDepth - 1));
+            return TranslatePlaceholdersCore(input, currentRecursionDepth);
         }
     }
 }
