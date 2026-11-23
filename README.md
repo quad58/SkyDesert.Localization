@@ -6,7 +6,7 @@ A lightweight, flexible and extensible localization library for .NET used in "Sk
 - Recursive translation - translations can refer to another translation via "{key}" placeholders, which would be replaced with specific translations.
 - Placeholders in translations can be replaced via arguments in the key, e.g., "key(placeholder=value, placeholder2=value, ...)".
 - Default implementation of the locale registry to change locales on run.
-- No static state - literally zero static members in the library.
+- No static state - no static members in the library (except extension classes).
 - Thread safe - uses concurrent data types under the hood.
 ## TODO:
 - Improve unescaping in the translation process.
