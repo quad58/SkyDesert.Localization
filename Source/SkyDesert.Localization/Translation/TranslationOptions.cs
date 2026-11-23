@@ -4,7 +4,7 @@ namespace SkyDesert.Localization.Translation
 {
     public readonly struct TranslationOptions
     {
-        public TranslationOptions(bool parseArguments = true, int maxRecursionDepth = 32)
+        public TranslationOptions(bool parseArguments, int maxRecursionDepth)
         {
             if (maxRecursionDepth < 0) throw new ArgumentOutOfRangeException(nameof(maxRecursionDepth));
 
