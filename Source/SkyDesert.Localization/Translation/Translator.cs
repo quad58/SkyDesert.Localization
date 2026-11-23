@@ -20,7 +20,7 @@ namespace SkyDesert.Localization.Translation
         }
 
         private ITranslationSource TranslationSource { get; }
-        public TranslationOptions DefaultOptions { get; }
+        private TranslationOptions DefaultOptions { get; }
 
         public bool TryTranslate(string key, out string translation, TranslationOptions options)
         {
